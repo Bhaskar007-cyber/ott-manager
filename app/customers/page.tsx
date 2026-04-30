@@ -1,4 +1,5 @@
 "use client";
+
 export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -54,12 +55,22 @@ const [errorMsg, setErrorMsg] = useState("");
     }
   };
 
-  useEffect(() => {
-  const load = async () => {
-    await fetchData();
+ useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const res = await fetch("/api/customers", {
+        cache: "no-store",
+      });
+      const data = await res.json();
+      setCustomers(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  load();
+  fetchData();
 }, []);
 
   // ✅ 🔥 REMOVE DUPLICATE PLANS

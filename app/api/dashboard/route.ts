@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server";
 
 export const revalidate = 10; // ✅ cache for 10 seconds

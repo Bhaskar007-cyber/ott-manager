@@ -239,10 +239,10 @@ export default function PlansPage() {
       </div>
 
       {/* GRID */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
         {filteredPlans.map((p) => (
           <div key={p.id} className="p-[2px] rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">
-            <div className="bg-white p-4 rounded-xl relative">
+            <div className="bg-white p-2 md:p-3 rounded-xl relative">
 
               <div className="absolute right-2 top-2">
                 <button
@@ -283,11 +283,11 @@ export default function PlansPage() {
                 <img
                   src={p.image}
                   onClick={() => setPreviewImage(p.image)}
-                  className="w-12 h-12 rounded-full cursor-pointer"
+                  className="w-8 h-8 rounded-full cursor-pointer"
                 />
               )}
 
-              <h2 className="font-semibold text-sm md:text-base text-gray-800 leading-tight">
+              <h2 className="font-medium text-[11px] md:text-sm text-gray-800 leading-snug">
   {p.name}
 </h2>
 
@@ -295,7 +295,7 @@ export default function PlansPage() {
   Subscription plan
 </p>
 
-<p className="text-lg md:text-xl font-bold mt-1 text-indigo-600">
+<p className="text-indigo-600 font-bold text-xs md:text-base">
   ₹{p.price}
 </p>
             </div>

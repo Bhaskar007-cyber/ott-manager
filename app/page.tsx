@@ -189,23 +189,28 @@ export default function Dashboard() {
         </div>
 
         {/* PLANS */}
-        <div className="bg-white/70 backdrop-blur-xl p-3 md:p-5 rounded-xl md:rounded-2xl shadow">
-          <h2 className="text-sm md:text-lg font-semibold mb-3">
-            Plans
-          </h2>
+        <div className="space-y-2">
+  {plans.map((p) => (
+    <div
+      key={p.id}
+      className="flex justify-between items-center bg-white/80 backdrop-blur-md px-3 py-3 rounded-xl shadow-sm border border-gray-100"
+    >
+      <div className="flex flex-col max-w-[75%]">
+       <span className="text-[12px] md:text-sm font-semibold text-gray-900 leading-snug tracking-tight">
+  {p.name}
+</span>
 
-          {plans.map((p) => (
-            <div
-              key={p.id}
-              className="flex justify-between items-center p-2 md:p-3 rounded-lg mb-2 hover:bg-white/50"
-            >
-              <p className="text-sm">{p.name}</p>
-              <span className="text-sm font-semibold text-indigo-600">
-                ₹{p.price}
-              </span>
-            </div>
-          ))}
-        </div>
+        <span className="text-[10px] text-gray-400">
+          Subscription plan
+        </span>
+      </div>
+
+      <span className="text-indigo-600 font-semibold text-sm md:text-base whitespace-nowrap">
+        ₹{p.price}
+      </span>
+    </div>
+  ))}
+</div>
 
       </div>
     </div>

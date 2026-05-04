@@ -64,17 +64,15 @@ export async function PUT(
 // ================= DELETE =================
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params; // ✅ FIX
+    const { id } = await context.params; // ✅ FIX
+
     const planId = Number(id);
 
     if (!planId || isNaN(planId)) {
-      return NextResponse.json(
-        { error: "Invalid ID" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
 
     const plan = await prisma.plan.findUnique({
@@ -82,36 +80,22 @@ export async function DELETE(
     });
 
     if (!plan) {
-      return NextResponse.json(
-        { error: "Plan not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Plan not found" }, { status: 404 });
     }
 
-    // ❌ block base plan
     if (plan.category === "ALL") {
-      return NextResponse.json(
-        { error: "Cannot delete base plan" },
-        { status: 400 }
-      );
+      await prisma.plan.deleteMany({
+        where: { name: plan.name },
+      });
+    } else {
+      await prisma.plan.delete({
+        where: { id: planId },
+      });
     }
-
-    // ✅ delete ONLY selected plan
-    await prisma.customer.deleteMany({
-      where: { planId: plan.id },
-    });
-
-    await prisma.plan.delete({
-      where: { id: plan.id },
-    });
 
     return NextResponse.json({ success: true });
-
-  } catch (error) {
-    console.error("DELETE ERROR:", error);
-    return NextResponse.json(
-      { error: "Delete failed" },
-      { status: 500 }
-    );
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "Delete failed" }, { status: 500 });
   }
 }

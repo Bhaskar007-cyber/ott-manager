@@ -132,24 +132,31 @@ export default function PlansPage() {
 
   // ================= DELETE =================
   const deletePlan = async (plan: Plan) => {
+  try {
+    // 🔥 If base plan → delete all related copies
     if (plan.category === "ALL") {
-      alert("Cannot delete base plan");
-      return;
-    }
+      const related = plans.filter((p) => p.name === plan.name);
 
-    const res = await fetch(`/api/plans/${plan.id}`, {
-      method: "DELETE",
-    });
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => null);
-      alert(data?.error || "Delete failed");
-      return;
+      await Promise.all(
+        related.map((p) =>
+          fetch(`/api/plans/${p.id}`, {
+            method: "DELETE",
+          })
+        )
+      );
+    } else {
+      // normal delete
+      await fetch(`/api/plans/${plan.id}`, {
+        method: "DELETE",
+      });
     }
 
     fetchPlans();
-  };
-
+  } catch (err) {
+    console.error(err);
+    alert("Delete failed");
+  }
+};
   // ================= FILTER =================
   const filteredPlans = plans
     .filter((p) =>
@@ -179,64 +186,76 @@ export default function PlansPage() {
       <div className="flex justify-between items-center mb-5">
         <h1 className="text-2xl font-bold">Plans</h1>
 
-        <button
-  onClick={() => setShowModal(true)}
-  className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 rounded-xl shadow-md hover:scale-105 transition"
->
-  <Plus size={16} />
-  Add Plan
-</button>
+       
       </div>
 
       {/* SEARCH */}
-      <input
-        placeholder="Search..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full p-3 rounded-xl border mb-4"
-      />
+      <div className="flex items-center gap-2 mb-4">
+  <input
+    placeholder="Search..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="flex-1 p-3 rounded-xl border"
+  />
 
-      {/* ✅ SORT DROPDOWN (PUT HERE) */}
-<div className="flex justify-end mb-3">
-  <select
-    value={sort}
-    onChange={(e) => setSort(e.target.value)}
-    className="p-2 text-sm rounded-xl border bg-white shadow"
+  <button
+    onClick={() => setShowModal(true)}
+    className="whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-xl shadow-md"
   >
-    <option value="low">Price: Low → High</option>
-    <option value="high">Price: High → Low</option>
-  </select>
+    + Add Plan
+  </button>
 </div>
+      
 
       {/* TABS */}
-      <div className="flex gap-2 mb-4 flex-wrap">
-        {[
-          { key: "ALL", label: "All" },
-          { key: "ALL_IN_ONE", label: "All-in-One" },
-          { key: "SINGLE", label: "Single" },
-        ].map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            className={`px-3 py-1 text-xs rounded-full ${
-              tab === t.key
-                ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
-                : "bg-white border"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
+<div className="flex justify-between items-start mb-4">
 
-        {tab !== "ALL" && (
-  <button
-    onClick={() => setShowPicker(true)}
-    className="ml-auto px-3 py-1 text-xs rounded-full bg-green-500 text-white hover:scale-105 transition"
-  >
-    + Add
-  </button>
-)}
-      </div>
+  {/* LEFT SIDE - TABS */}
+  <div className="flex gap-2 flex-wrap">
+    {[
+      { key: "ALL", label: "All" },
+      { key: "ALL_IN_ONE", label: "All-in-One" },
+      { key: "SINGLE", label: "Single" },
+    ].map((t) => (
+      <button
+        key={t.key}
+        onClick={() => setTab(t.key)}
+        className={`px-3 py-1 text-xs rounded-full ${
+          tab === t.key
+            ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
+            : "bg-white border"
+        }`}
+      >
+        {t.label}
+      </button>
+    ))}
+  </div>
+
+  {/* RIGHT SIDE - SORT + ADD */}
+  <div className="flex flex-col items-end gap-2">
+
+    {/* SORT */}
+    <select
+      value={sort}
+      onChange={(e) => setSort(e.target.value)}
+      className="px-3 py-2 rounded-xl border bg-white text-sm shadow-sm"
+    >
+      <option value="low">Price: Low → High</option>
+      <option value="high">Price: High → Low</option>
+    </select>
+
+    {/* ADD BUTTON (only for sections) */}
+    {tab !== "ALL" && (
+      <button
+        onClick={() => setShowPicker(true)}
+        className="px-3 py-1 text-xs rounded-full bg-green-500 text-white hover:scale-105 transition"
+      >
+        + Add
+      </button>
+    )}
+
+  </div>
+</div>
 
       {/* GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">

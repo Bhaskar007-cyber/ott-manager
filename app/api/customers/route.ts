@@ -15,7 +15,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-
+    
     const { name, phone, planId, ottNumber, startDate } = body;
 
     if (!name || !phone || !planId || !ottNumber) {
@@ -37,6 +37,21 @@ export async function POST(req: Request) {
       );
     }
 
+    // 🔥 COUNT EXISTING USAGE
+    const existingCount = await prisma.customer.count({
+      where: {
+        ottNumber: ottNumber,
+      },
+    });
+
+    // ❌ BLOCK IF MORE THAN 2
+    if (existingCount >= 2) {
+      return NextResponse.json(
+        { error: "This OTT number already used 2 times" },
+        { status: 400 }
+      );
+    }
+
     // 🔥 CALCULATE DATES
     const start = startDate ? new Date(startDate) : new Date();
 
@@ -55,7 +70,15 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(customer);
+    // ✅ RETURN WITH WARNING INFO (ONLY ADDITION)
+    return NextResponse.json({
+      customer,
+      warning:
+        existingCount === 1
+          ? "This OTT number is now used 2 times"
+          : null,
+    });
+
   } catch (error) {
     console.error("CREATE CUSTOMER ERROR:", error);
 

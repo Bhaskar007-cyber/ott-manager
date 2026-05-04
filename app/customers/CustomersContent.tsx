@@ -19,6 +19,7 @@ type Plan = {
 };
 
 export default function CustomersContent() {
+  const [search, setSearch] = useState("");
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,13 +63,19 @@ export default function CustomersContent() {
 
   // ================= FILTER =================
   const filteredCustomers = customers.filter((c) => {
-    const expired = new Date(c.expiryDate) < new Date();
+  const expired = new Date(c.expiryDate) < new Date();
 
-    if (status === "active") return !expired;
-    if (status === "expired") return expired;
+  // 🔍 SEARCH FILTER
+  const matchesSearch =
+    c.name.toLowerCase().includes(search.toLowerCase()) ||
+    c.phone.includes(search);
 
-    return true;
-  });
+  // 🎯 STATUS FILTER
+  if (status === "active") return !expired && matchesSearch;
+  if (status === "expired") return expired && matchesSearch;
+
+  return matchesSearch;
+});
 
   // ================= UNIQUE PLANS =================
   const uniquePlans = Array.from(
@@ -184,13 +191,25 @@ export default function CustomersContent() {
             Customers
           </h1>
 
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-full"
-          >
-            + Add Customer
-          </button>
+          
         </div>
+
+       {/* ✅ PUT SEARCH HERE */}
+<div className="flex items-center gap-2 mb-4">
+  <input
+    placeholder="Search customer..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="flex-1 p-3 rounded-xl border outline-none focus:ring-2 focus:ring-purple-500"
+  />
+
+  <button
+    onClick={() => setShowModal(true)}
+    className="whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-xl shadow-md"
+  >
+    + Add Customer
+  </button>
+</div>
 
         {/* LIST */}
         <div className="space-y-4">

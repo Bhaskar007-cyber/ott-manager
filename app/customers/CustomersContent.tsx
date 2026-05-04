@@ -200,12 +200,12 @@ export default function CustomersContent() {
     placeholder="Search customer..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
-    className="flex-1 p-3 rounded-xl border outline-none focus:ring-2 focus:ring-purple-500"
+    className="flex-[0.7] min-w-0 p-3 rounded-xl border"
   />
 
   <button
     onClick={() => setShowModal(true)}
-    className="whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-xl shadow-md"
+    className="flex-shrink-0 whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-3 py-2 rounded-xl shadow-md"
   >
     + Add Customer
   </button>

@@ -22,7 +22,7 @@ export default function SidebarLayout({
   ];
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen w-full overflow-x-hidden">
 
       {/* ================= MOBILE UI ================= */}
       <div className="w-full md:hidden">
@@ -37,7 +37,6 @@ export default function SidebarLayout({
         {/* 🔥 TOP NAV */}
         <div className="bg-white/50 backdrop-blur-xl border-b px-2 py-2 sticky top-[56px] z-30">
           <div className="flex gap-2 bg-white/40 p-1 rounded-xl shadow-inner">
-
             {menu.map((item) => {
               const isActive = pathname === item.path;
 
@@ -56,12 +55,13 @@ export default function SidebarLayout({
                 </Link>
               );
             })}
-
           </div>
         </div>
 
-        {/* 🔥 CONTENT */}
-        <main className="p-4">{children}</main>
+        {/* 🔥 MOBILE CONTENT */}
+        <main className="p-4">
+          {children}
+        </main>
       </div>
 
       {/* ================= DESKTOP SIDEBAR ================= */}

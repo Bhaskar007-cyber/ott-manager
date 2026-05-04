@@ -406,14 +406,22 @@ export default function PlansPage() {
       )}
 
       {/* IMAGE PREVIEW */}
-      {previewImage && (
-        <div
-          onClick={() => setPreviewImage(null)}
-          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
-        >
-          <img src={previewImage} className="max-w-md rounded-xl" />
-        </div>
-      )}
+{previewImage && (
+  <div
+    onClick={() => setPreviewImage(null)}
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+  >
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="bg-white rounded-2xl p-4 max-w-sm w-full max-h-[80vh] overflow-auto shadow-xl"
+    >
+      <img
+        src={previewImage}
+        className="w-full h-auto rounded-xl object-contain"
+      />
+    </div>
+  </div>
+)}
     </div>
   );
 }

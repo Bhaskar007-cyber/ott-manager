@@ -11,7 +11,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// TYPES
 type Customer = {
   id: number;
   name: string;
@@ -25,26 +24,23 @@ type Plan = {
   price: number;
 };
 
-// 🔥 PREMIUM CARD
-function Card({
-  title,
-  value,
-  gradient,
-  link,
-}: {
+// ✅ COMPACT CARD
+type CardProps = {
   title: string;
   value: string | number;
   gradient: string;
   link: string;
-}) {
+};
+
+function Card({ title, value, gradient, link }: CardProps) {
   return (
     <Link href={link}>
       <div
-        className={`p-5 rounded-2xl text-white shadow-lg transition-all duration-300 
-        hover:scale-105 active:scale-95 cursor-pointer ${gradient}`}
+        className={`p-3 md:p-5 rounded-xl md:rounded-2xl text-white shadow-lg 
+        hover:scale-105 active:scale-95 transition ${gradient}`}
       >
-        <p className="text-sm opacity-80">{title}</p>
-        <h2 className="text-3xl font-bold">{value}</h2>
+        <p className="text-xs md:text-sm opacity-80">{title}</p>
+        <h2 className="text-lg md:text-3xl font-bold">{value}</h2>
       </div>
     </Link>
   );
@@ -57,18 +53,13 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     try {
-      setLoading(true);
-
-      const res = await fetch("/api/dashboard", {
-        cache: "no-store",
-      });
-
+      const res = await fetch("/api/dashboard", { cache: "no-store" });
       const data = await res.json();
 
       setCustomers(data.customers || []);
       setPlans(data.plans || []);
     } catch (err) {
-      console.error("Dashboard error:", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -98,8 +89,7 @@ export default function Dashboard() {
     );
 
   const getDaysLeft = (date: string) => {
-    const diff =
-      new Date(date).getTime() - today.getTime();
+    const diff = new Date(date).getTime() - today.getTime();
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   };
 
@@ -124,93 +114,55 @@ export default function Dashboard() {
     };
   });
 
-  // 🔥 LOADING UI (FIXED)
-  if (loading) {
-    return (
-      <div className="p-6 min-h-screen animate-pulse">
-        <div className="h-8 w-40 bg-white/40 rounded mb-6"></div>
-
-        <div className="grid md:grid-cols-4 gap-4 mb-6">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-24 bg-white/40 rounded-2xl"></div>
-          ))}
-        </div>
-
-        <div className="h-72 bg-white/40 rounded-2xl mb-6"></div>
-
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="h-40 bg-white/40 rounded-2xl"></div>
-          <div className="h-40 bg-white/40 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <div className="p-4">Loading...</div>;
 
   return (
-    <div className="p-6 min-h-screen text-black">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+    <div className="p-3 md:p-6 min-h-screen">
+
+      <h1 className="text-xl md:text-3xl font-bold mb-4 md:mb-6">
+        Dashboard
+      </h1>
 
       {/* CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <Card
-          title="Revenue"
-          value={`₹${revenue}`}
-          gradient="bg-gradient-to-r from-blue-500 to-blue-700"
-          link="/revenue"
-        />
-
-        <Card
-          title="Customers"
-          value={customers.length}
-          gradient="bg-gradient-to-r from-gray-500 to-gray-700"
-          link="/customers"
-        />
-
-        <Card
-          title="Active"
-          value={active.length}
-          gradient="bg-gradient-to-r from-green-500 to-green-700"
-          link="/customers?status=active"
-        />
-
-        <Card
-          title="Expired"
-          value={expired.length}
-          gradient="bg-gradient-to-r from-red-500 to-red-700"
-          link="/customers?status=expired"
-        />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5">
+        <Card title="Revenue" value={`₹${revenue}`} gradient="bg-blue-600" link="/revenue" />
+        <Card title="Customers" value={customers.length} gradient="bg-gray-600" link="/customers" />
+        <Card title="Active" value={active.length} gradient="bg-green-600" link="/customers?status=active" />
+        <Card title="Expired" value={expired.length} gradient="bg-red-600" link="/customers?status=expired" />
       </div>
 
       {/* CHART */}
-      <div className="bg-white/40 backdrop-blur-xl border border-white/30 p-5 rounded-2xl shadow-lg mb-6">
-        <h2 className="font-bold mb-4 text-lg">Revenue Analytics</h2>
+      <div className="bg-white/70 backdrop-blur-xl p-3 md:p-5 rounded-xl md:rounded-2xl shadow mb-5">
+        <h2 className="font-semibold text-sm md:text-lg mb-3">
+          Revenue Analytics
+        </h2>
 
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={220}>
           <LineChart data={chartData}>
-            <XAxis dataKey="name" />
-            <YAxis />
+            <XAxis dataKey="name" fontSize={10} />
+            <YAxis fontSize={10} />
             <Tooltip />
             <Line
               type="monotone"
               dataKey="revenue"
-              strokeWidth={3}
+              strokeWidth={2}
               stroke="#6366f1"
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      {/* LOWER SECTION */}
-      <div className="grid md:grid-cols-2 gap-6">
+      {/* LOWER */}
+      <div className="grid md:grid-cols-2 gap-4">
 
         {/* EXPIRING */}
-        <div className="bg-white/40 backdrop-blur-xl border border-white/30 p-6 rounded-2xl shadow-lg">
-          <h2 className="text-lg font-semibold mb-4">
-            Expiring in 7 Days
+        <div className="bg-white/70 backdrop-blur-xl p-3 md:p-5 rounded-xl md:rounded-2xl shadow">
+          <h2 className="text-sm md:text-lg font-semibold mb-3">
+            Expiring Soon
           </h2>
 
           {expiringSoon.length === 0 ? (
-            <p className="text-gray-500 text-sm">No upcoming expiries</p>
+            <p className="text-xs text-gray-500">No expiries</p>
           ) : (
             expiringSoon.map((c) => {
               const days = getDaysLeft(c.expiryDate);
@@ -218,17 +170,17 @@ export default function Dashboard() {
               return (
                 <div
                   key={c.id}
-                  className="flex justify-between items-center p-3 rounded-xl hover:bg-white/50 transition mb-2 border-l-4 border-yellow-400"
+                  className="flex justify-between items-center p-2 md:p-3 rounded-lg hover:bg-white/50 mb-2"
                 >
                   <div>
-                    <p className="font-medium">{c.name}</p>
-                    <p className="text-xs text-gray-500">
-                      Exp: {new Date(c.expiryDate).toLocaleDateString()}
+                    <p className="text-sm font-medium">{c.name}</p>
+                    <p className="text-[10px] text-gray-500">
+                      {new Date(c.expiryDate).toLocaleDateString()}
                     </p>
                   </div>
 
-                  <span className="text-xs bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
-                    {days} days
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">
+                    {days}d
                   </span>
                 </div>
               );
@@ -237,30 +189,22 @@ export default function Dashboard() {
         </div>
 
         {/* PLANS */}
-        <div className="bg-white/40 backdrop-blur-xl border border-white/30 p-6 rounded-2xl shadow-lg">
-          <h2 className="text-lg font-semibold mb-4">
+        <div className="bg-white/70 backdrop-blur-xl p-3 md:p-5 rounded-xl md:rounded-2xl shadow">
+          <h2 className="text-sm md:text-lg font-semibold mb-3">
             Plans
           </h2>
 
-          <div className="space-y-3">
-            {plans.map((p) => (
-              <div
-                key={p.id}
-                className="flex justify-between items-center p-4 rounded-xl border border-white/30 hover:bg-white/50 transition"
-              >
-                <div>
-                  <p className="font-semibold">{p.name}</p>
-                  <p className="text-xs text-gray-500">
-                    Subscription Plan
-                  </p>
-                </div>
-
-                <span className="text-lg font-bold text-indigo-600">
-                  ₹{p.price}
-                </span>
-              </div>
-            ))}
-          </div>
+          {plans.map((p) => (
+            <div
+              key={p.id}
+              className="flex justify-between items-center p-2 md:p-3 rounded-lg mb-2 hover:bg-white/50"
+            >
+              <p className="text-sm">{p.name}</p>
+              <span className="text-sm font-semibold text-indigo-600">
+                ₹{p.price}
+              </span>
+            </div>
+          ))}
         </div>
 
       </div>

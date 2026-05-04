@@ -7,7 +7,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
+    const { id } = await params; // ✅ FIX
     const planId = Number(id);
 
     if (!planId || isNaN(planId)) {
@@ -27,7 +27,6 @@ export async function PUT(
       );
     }
 
-    // 🔥 STEP 1: GET ORIGINAL PLAN
     const originalPlan = await prisma.plan.findUnique({
       where: { id: planId },
     });
@@ -39,11 +38,10 @@ export async function PUT(
       );
     }
 
-    // 🔥 STEP 2: UPDATE ALL COPIES (VERY IMPORTANT)
+    // update ALL copies (same name logic)
     await prisma.plan.updateMany({
       where: {
         name: originalPlan.name,
-        price: originalPlan.price,
       },
       data: {
         name,
@@ -55,7 +53,7 @@ export async function PUT(
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error("UPDATE ERROR FULL:", error);
+    console.error("UPDATE ERROR:", error);
     return NextResponse.json(
       { error: "Update failed" },
       { status: 500 }
@@ -69,7 +67,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
+    const { id } = await params; // ✅ FIX
     const planId = Number(id);
 
     if (!planId || isNaN(planId)) {
@@ -79,41 +77,38 @@ export async function DELETE(
       );
     }
 
-    // 🔥 STEP 1: GET ORIGINAL PLAN
-    const originalPlan = await prisma.plan.findUnique({
+    const plan = await prisma.plan.findUnique({
       where: { id: planId },
     });
 
-    if (!originalPlan) {
+    if (!plan) {
       return NextResponse.json(
         { error: "Plan not found" },
         { status: 404 }
       );
     }
 
-    // 🔥 STEP 2: DELETE ALL COPIES (IMPORTANT)
-    const plansToDelete = await prisma.plan.findMany({
-      where: {
-        name: originalPlan.name,
-        price: originalPlan.price,
-      },
+    // ❌ block base plan
+    if (plan.category === "ALL") {
+      return NextResponse.json(
+        { error: "Cannot delete base plan" },
+        { status: 400 }
+      );
+    }
+
+    // ✅ delete ONLY selected plan
+    await prisma.customer.deleteMany({
+      where: { planId: plan.id },
     });
 
-    for (const p of plansToDelete) {
-      // delete customers linked to each copy
-      await prisma.customer.deleteMany({
-        where: { planId: p.id },
-      });
-
-      await prisma.plan.delete({
-        where: { id: p.id },
-      });
-    }
+    await prisma.plan.delete({
+      where: { id: plan.id },
+    });
 
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error("DELETE ERROR FULL:", error);
+    console.error("DELETE ERROR:", error);
     return NextResponse.json(
       { error: "Delete failed" },
       { status: 500 }

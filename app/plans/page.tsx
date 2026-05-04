@@ -17,13 +17,13 @@ export default function PlansPage() {
 
   const [showModal, setShowModal] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
-
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState<string | null>(null);
-  const [category, setCategory] = useState("ALL");
+
+  const [uploading, setUploading] = useState(false);
 
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("low");
@@ -58,47 +58,59 @@ export default function PlansPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setUploading(true);
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "ott_upload");
 
-    const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dl5tzgo05/image/upload",
-      { method: "POST", body: formData }
-    );
+    try {
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dl5tzgo05/image/upload",
+        { method: "POST", body: formData }
+      );
 
-    const data = await res.json();
-    setImage(data.secure_url);
+      const data = await res.json();
+      setImage(data.secure_url);
+    } catch {
+      alert("Upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
   // ================= SAVE =================
   const savePlan = async () => {
     if (!name || !price) return;
 
-    const payload = {
-      name,
-      price: Number(price),
-      image,
-      category,
-    };
-
-    let res;
-
     if (editingPlan) {
-      res = await fetch(`/api/plans/${editingPlan.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const related = plans.filter((p) => p.name === editingPlan.name);
+
+      await Promise.all(
+        related.map((p) =>
+          fetch(`/api/plans/${p.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name,
+              price: Number(price),
+              image,
+            }),
+          })
+        )
+      );
     } else {
-      res = await fetch("/api/plans", {
+      await fetch("/api/plans", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          name,
+          price: Number(price),
+          image,
+          category: "ALL",
+        }),
       });
     }
-
-    if (!res.ok) return alert("Error saving");
 
     resetForm();
     fetchPlans();
@@ -110,9 +122,7 @@ export default function PlansPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        name: plan.name,
-        price: plan.price,
-        image: plan.image,
+        basePlanId: plan.id,
         category: newCategory,
       }),
     });
@@ -121,30 +131,43 @@ export default function PlansPage() {
   };
 
   // ================= DELETE =================
-  const deletePlan = async (id: number) => {
-    await fetch(`/api/plans/${id}`, { method: "DELETE" });
+  const deletePlan = async (plan: Plan) => {
+    if (plan.category === "ALL") {
+      alert("Cannot delete base plan");
+      return;
+    }
+
+    const res = await fetch(`/api/plans/${plan.id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      alert(data?.error || "Delete failed");
+      return;
+    }
+
     fetchPlans();
   };
 
   // ================= FILTER =================
   const filteredPlans = plans
-  .filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  )
-  .filter((p) => {
-    if (tab === "ALL") return p.category === "ALL"; // ✅ FIX
-    return p.category === tab;
-  })
-  .sort((a, b) =>
-    sort === "low" ? a.price - b.price : b.price - a.price
-  );
+    .filter((p) =>
+      p.name.toLowerCase().includes(search.toLowerCase())
+    )
+    .filter((p) => {
+      if (tab === "ALL") return p.category === "ALL";
+      return p.category === tab;
+    })
+    .sort((a, b) =>
+      sort === "low" ? a.price - b.price : b.price - a.price
+    );
 
   // ================= RESET =================
   const resetForm = () => {
     setName("");
     setPrice("");
     setImage(null);
-    setCategory("ALL");
     setEditingPlan(null);
     setShowModal(false);
   };
@@ -153,50 +176,52 @@ export default function PlansPage() {
     <div className="min-h-screen p-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
 
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Plans</h1>
+      <div className="flex justify-between items-center mb-5">
+        <h1 className="text-2xl font-bold">Plans</h1>
 
         <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 rounded-xl shadow-lg hover:scale-105 transition"
-        >
-          <Plus size={16} /> Add Plan
-        </button>
+  onClick={() => setShowModal(true)}
+  className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 rounded-xl shadow-md hover:scale-105 transition"
+>
+  <Plus size={16} />
+  Add Plan
+</button>
       </div>
 
-      {/* SEARCH + SORT */}
-      <div className="flex gap-3 mb-6">
-        <input
-          placeholder="Search plans..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full p-3 rounded-xl border focus:ring-2 focus:ring-indigo-400"
-        />
+      {/* SEARCH */}
+      <input
+        placeholder="Search..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full p-3 rounded-xl border mb-4"
+      />
 
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          className="p-3 rounded-xl border"
-        >
-          <option value="low">Low → High</option>
-          <option value="high">High → Low</option>
-        </select>
-      </div>
+      {/* ✅ SORT DROPDOWN (PUT HERE) */}
+<div className="flex justify-end mb-3">
+  <select
+    value={sort}
+    onChange={(e) => setSort(e.target.value)}
+    className="p-2 text-sm rounded-xl border bg-white shadow"
+  >
+    <option value="low">Price: Low → High</option>
+    <option value="high">Price: High → Low</option>
+  </select>
+</div>
 
       {/* TABS */}
-      <div className="flex gap-3 mb-6">
+      <div className="flex gap-2 mb-4 flex-wrap">
         {[
-          { key: "ALL", label: "All Plans" },
+          { key: "ALL", label: "All" },
           { key: "ALL_IN_ONE", label: "All-in-One" },
-          { key: "SINGLE", label: "Single Packs" },
+          { key: "SINGLE", label: "Single" },
         ].map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
+            className={`px-3 py-1 text-xs rounded-full ${
               tab === t.key
-                ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg"
-                : "bg-white/70 backdrop-blur border"
+                ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
+                : "bg-white border"
             }`}
           >
             {t.label}
@@ -204,57 +229,49 @@ export default function PlansPage() {
         ))}
 
         {tab !== "ALL" && (
-          <button
-            onClick={() => setShowPicker(true)}
-            className="ml-auto bg-green-500 text-white px-4 py-2 rounded-xl shadow hover:scale-105 transition"
-          >
-            + Add
-          </button>
-        )}
+  <button
+    onClick={() => setShowPicker(true)}
+    className="ml-auto px-3 py-1 text-xs rounded-full bg-green-500 text-white hover:scale-105 transition"
+  >
+    + Add
+  </button>
+)}
       </div>
 
       {/* GRID */}
-      <div className="grid md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {filteredPlans.map((p) => (
-          <div
-            key={p.id}
-            className="rounded-2xl p-[2px] bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500 hover:shadow-[0_0_20px_rgba(99,102,241,0.6)] transition"
-          >
-            <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-5 relative">
+          <div key={p.id} className="p-[2px] rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">
+            <div className="bg-white p-4 rounded-xl relative">
 
-              {/* MENU */}
-              <div className="absolute right-3 top-3">
+              <div className="absolute right-2 top-2">
                 <button
                   onClick={(e) => {
-                    e.stopPropagation();
+                    e.stopPropagation(); // ✅ FIXED MENU BUG
                     setMenuOpen(menuOpen === p.id ? null : p.id);
                   }}
                 >
-                  <MoreVertical size={18} />
+                  <MoreVertical size={16} />
                 </button>
 
                 {menuOpen === p.id && (
-                  <div
-                    onClick={(e) => e.stopPropagation()}
-                    className="absolute right-0 mt-2 bg-white shadow-xl rounded-xl w-32 z-10"
-                  >
+                  <div className="absolute right-0 mt-2 bg-white shadow-xl rounded-xl w-28 z-50">
                     <button
                       onClick={() => {
                         setEditingPlan(p);
                         setName(p.name);
                         setPrice(String(p.price));
                         setImage(p.image);
-                        setCategory(p.category);
                         setShowModal(true);
                       }}
-                      className="block w-full px-3 py-2 text-left hover:bg-gray-100"
+                      className="block w-full px-3 py-2 text-xs hover:bg-gray-100"
                     >
                       Edit
                     </button>
 
                     <button
-                      onClick={() => deletePlan(p.id)}
-                      className="block w-full px-3 py-2 text-left text-red-500 hover:bg-gray-100"
+                      onClick={() => deletePlan(p)}
+                      className="block w-full px-3 py-2 text-xs text-red-500 hover:bg-gray-100"
                     >
                       Delete
                     </button>
@@ -262,7 +279,6 @@ export default function PlansPage() {
                 )}
               </div>
 
-              {/* IMAGE */}
               {p.image && (
                 <img
                   src={p.image}
@@ -271,88 +287,101 @@ export default function PlansPage() {
                 />
               )}
 
-              <h2 className="font-semibold mt-3">{p.name}</h2>
-              <p className="text-gray-500 text-sm">Subscription plan</p>
-              <p className="text-lg font-bold mt-2 text-indigo-600">₹{p.price}</p>
+              <h2 className="font-semibold text-sm md:text-base text-gray-800 leading-tight">
+  {p.name}
+</h2>
 
+<p className="text-xs text-gray-400 mt-1">
+  Subscription plan
+</p>
+
+<p className="text-lg md:text-xl font-bold mt-1 text-indigo-600">
+  ₹{p.price}
+</p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* PICKER */}
-      {showPicker && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-2xl w-[500px] max-h-[80vh] overflow-y-auto shadow-2xl">
-            <h2 className="font-bold mb-4">Select Plan</h2>
+{/* PICKER */}
+{showPicker && (
+  <div
+    className="fixed inset-0 bg-black/40 flex items-center justify-center z-[9999]"
+    onClick={() => setShowPicker(false)}
+  >
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="bg-white p-5 rounded-2xl w-[300px] shadow-xl"
+    >
+      <h2 className="text-sm font-semibold mb-3 text-gray-700">
+        Select Plan
+      </h2>
 
-            <div className="grid grid-cols-2 gap-3">
-              {plans
-  .filter((p) => p.category === "ALL") // 🔥 IMPORTANT FIX
-  .map((p) => (
-                <div
-                  key={p.id}
-                  onClick={() => {
-                    copyPlan(p, tab);
-                    setShowPicker(false);
-                  }}
-                  className="border p-3 rounded-xl cursor-pointer hover:bg-indigo-50"
-                >
-                  {p.name}
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={() => setShowPicker(false)}
-              className="mt-4 bg-gray-200 px-4 py-2 rounded"
-            >
-              Close
-            </button>
+      {plans
+        .filter((p) => p.category === "ALL")
+        .map((p) => (
+          <div
+            key={p.id}
+            onClick={() => {
+              copyPlan(p, tab);
+              setShowPicker(false);
+            }}
+            className="p-3 border rounded-xl mb-2 cursor-pointer hover:bg-gray-100 transition"
+          >
+            {p.name}
           </div>
-        </div>
-      )}
+        ))}
+    </div>
+  </div>
+)}
 
       {/* MODAL */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-2xl w-[350px]">
+        <div
+          onClick={resetForm}
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-[350px] p-[2px] rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500"
+          >
+            <div className="bg-white rounded-2xl p-6">
 
-            <input
-              placeholder="Plan Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="border p-2 w-full mb-3 rounded"
-            />
+              <input
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full p-3 border rounded-xl mb-3"
+              />
 
-            <input
-              placeholder="Price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="border p-2 w-full mb-3 rounded"
-            />
+              <input
+                placeholder="Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                className="w-full p-3 border rounded-xl mb-3"
+              />
 
-            <label className="bg-gray-200 px-3 py-2 rounded cursor-pointer block text-center">
-              Choose Image
-              <input type="file" onChange={handleImage} className="hidden" />
-            </label>
+              <label className="block bg-purple-600 text-white text-center py-2 rounded-xl cursor-pointer">
+                Upload Image
+                <input type="file" onChange={handleImage} className="hidden" />
+              </label>
 
-            <div className="flex gap-3 mt-4">
+              {uploading && (
+                <p className="text-xs text-center mt-2">Uploading...</p>
+              )}
+
+              {image && (
+                <img src={image} className="w-20 h-20 mx-auto mt-3 rounded-xl" />
+              )}
+
               <button
                 onClick={savePlan}
-                className="bg-indigo-600 text-white px-4 py-2 rounded"
+                className="mt-4 w-full bg-purple-600 text-white py-2 rounded-xl"
               >
                 Save
               </button>
 
-              <button
-                onClick={resetForm}
-                className="bg-gray-300 px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
             </div>
-
           </div>
         </div>
       )}

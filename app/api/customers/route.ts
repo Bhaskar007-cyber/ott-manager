@@ -1,66 +1,54 @@
-import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-// ✅ GET all customers
+// ================= GET =================
 export async function GET() {
-  try {
-    const customers = await prisma.customer.findMany({
-      include: {
-        plan: true,
-      },
-      orderBy: {
-        id: "desc",
-      },
-    });
+  const customers = await prisma.customer.findMany({
+    include: { plan: true },
+    orderBy: { createdAt: "desc" },
+  });
 
-    return NextResponse.json(customers);
-  } catch (error) {
-    console.error("CUSTOMERS GET ERROR:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch customers" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(customers);
 }
 
-// ✅ ADD customer (FIX FOR YOUR ERROR)
+// ================= CREATE =================
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
     const { name, phone, planId, ottNumber, startDate } = body;
 
-    // 🔒 validation
-    if (!name || !phone || !planId || !ottNumber || !startDate) {
+    if (!name || !phone || !planId || !ottNumber) {
       return NextResponse.json(
-        { error: "All fields are required" },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // ✅ get plan (to calculate expiry)
+    // 🔥 GET PLAN (IMPORTANT)
     const plan = await prisma.plan.findUnique({
-      where: { id: planId },
+      where: { id: Number(planId) },
     });
 
     if (!plan) {
       return NextResponse.json(
         { error: "Plan not found" },
-        { status: 400 }
+        { status: 404 }
       );
     }
 
-    // ✅ expiry calculation
-    const start = new Date(startDate);
-    const expiry = new Date(start);
-    expiry.setDate(expiry.getDate() + plan.duration);
+    // 🔥 CALCULATE DATES
+    const start = startDate ? new Date(startDate) : new Date();
 
-    // ✅ create customer
+    const expiry = new Date(start);
+    expiry.setDate(expiry.getDate() + (plan.duration || 30));
+
+    // 🔥 CREATE CUSTOMER
     const customer = await prisma.customer.create({
       data: {
         name,
         phone,
-        planId,
+        planId: Number(planId),
         ottNumber,
         startDate: start,
         expiryDate: expiry,
@@ -69,9 +57,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json(customer);
   } catch (error) {
-    console.error("CUSTOMERS POST ERROR:", error);
+    console.error("CREATE CUSTOMER ERROR:", error);
+
     return NextResponse.json(
-      { error: "Failed to add customer" },
+      { error: "Failed to create customer" },
       { status: 500 }
     );
   }

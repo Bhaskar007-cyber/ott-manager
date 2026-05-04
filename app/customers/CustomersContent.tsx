@@ -23,9 +23,8 @@ export default function CustomersContent() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [showForm, setShowForm] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const [name, setName] = useState("");
@@ -41,10 +40,7 @@ export default function CustomersContent() {
   // ================= FETCH =================
   const fetchData = async () => {
     try {
-      const res = await fetch("/api/dashboard", {
-        cache: "no-store",
-      });
-
+      const res = await fetch("/api/dashboard", { cache: "no-store" });
       const data = await res.json();
 
       setCustomers(data.customers || []);
@@ -125,15 +121,21 @@ export default function CustomersContent() {
   const confirmDelete = async () => {
     if (!deleteId) return;
 
-    await fetch(`/api/customers/${deleteId}`, {
-      method: "DELETE",
-    });
+    try {
+      const res = await fetch(`/api/customers/${deleteId}`, {
+        method: "DELETE",
+      });
 
-    setDeleteId(null);
-    fetchData();
+      if (!res.ok) throw new Error("Delete failed");
+
+      setDeleteId(null);
+      fetchData();
+    } catch {
+      alert("Delete failed");
+    }
   };
 
-  // ================= OTHER =================
+  // ================= RESET =================
   const resetForm = () => {
     setName("");
     setPhone("");
@@ -141,9 +143,10 @@ export default function CustomersContent() {
     setOttNumber("");
     setStartDate("");
     setEditingId(null);
-    setShowForm(false);
+    setShowModal(false);
   };
 
+  // ================= EDIT =================
   const editCustomer = (c: Customer) => {
     setName(c.name);
     setPhone(c.phone);
@@ -151,231 +154,200 @@ export default function CustomersContent() {
     setOttNumber(c.ottNumber || "");
     setStartDate(c.startDate?.split("T")[0] || "");
     setEditingId(c.id);
-    setShowForm(true);
+    setShowModal(true);
   };
 
+  // ================= RENEW =================
   const renewCustomer = async (id: number) => {
-    const res = await fetch(`/api/customers/${id}/renew`, {
-      method: "PUT",
-    });
+    try {
+      const res = await fetch(`/api/customers/${id}/renew`, {
+        method: "PUT",
+      });
 
-    if (!res.ok) {
+      if (!res.ok) throw new Error();
+
+      fetchData();
+    } catch {
       alert("Renew failed");
-      return;
     }
-
-    fetchData();
   };
 
   if (loading) return <div className="p-6">Loading...</div>;
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
+    <div className="min-h-screen p-3 md:p-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
       <div className="max-w-5xl mx-auto">
 
         {/* HEADER */}
-        <div className="flex justify-between mb-6 items-center">
-          <h1 className="text-3xl font-bold text-gray-800">Customers</h1>
+        <div className="flex justify-between mb-5 items-center">
+          <h1 className="text-xl md:text-3xl font-bold text-gray-800">
+            Customers
+          </h1>
 
           <button
-            onClick={() => {
-              resetForm();
-              setShowForm(true);
-            }}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 rounded-full shadow-lg hover:scale-105 transition"
+            onClick={() => setShowModal(true)}
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-full"
           >
             + Add Customer
           </button>
         </div>
 
-        {/* ADD / EDIT MODAL */}
-        {showForm && (
-          <div
-            onClick={resetForm}
-            className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50"
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="w-[420px] rounded-2xl p-[2px] bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500"
-            >
-              <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-2xl">
+        {/* LIST */}
+        <div className="space-y-4">
+          {filteredCustomers.map((c) => {
+            const expired = new Date(c.expiryDate) < new Date();
 
-                <h2 className="text-lg font-semibold mb-4">
-                  {editingId ? "Edit Customer" : "Add Customer"}
-                </h2>
+            return (
+              <div
+                key={c.id}
+                className="p-[2px] rounded-2xl bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500"
+              >
+                <div className="bg-white p-4 rounded-2xl flex justify-between items-center">
 
-                <div className="space-y-3">
+                  {/* LEFT */}
+                  <div>
+                    <h2 className="font-semibold">{c.name}</h2>
+                    <p className="text-sm text-gray-600">{c.phone}</p>
+                    <p className="text-xs text-indigo-600">
+                      OTT: {c.ottNumber || "-"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Exp: {new Date(c.expiryDate).toLocaleDateString()}
+                    </p>
 
-                  <input
-                    placeholder="Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full p-3 rounded-xl border bg-white/70"
-                  />
-
-                  <input
-                    placeholder="Phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full p-3 rounded-xl border bg-white/70"
-                  />
-
-                  <input
-                    placeholder="OTT Number"
-                    value={ottNumber}
-                    onChange={(e) => setOttNumber(e.target.value)}
-                    className="w-full p-3 rounded-xl border bg-white/70"
-                  />
-
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full p-3 rounded-xl border bg-white/70"
-                  />
-
-                  <select
-                    value={planId}
-                    onChange={(e) => setPlanId(e.target.value)}
-                    className="w-full p-3 rounded-xl border bg-white/70"
-                  >
-                    <option value="">Select Plan</option>
-                    {uniquePlans.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  {errorMsg && (
-                    <div className="text-red-600 text-sm">{errorMsg}</div>
-                  )}
-
-                  <div className="flex gap-3 pt-2">
-                    <button
-                      onClick={saveCustomer}
-                      className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-xl"
+                    {/* STATUS */}
+                    <span
+                      className={`inline-block mt-2 px-3 py-1 text-xs rounded-full font-semibold ${
+                        expired
+                          ? "bg-red-100 text-red-600"
+                          : "bg-green-100 text-green-600"
+                      }`}
                     >
-                      Save
+                      {expired ? "Expired" : "Active"}
+                    </span>
+                  </div>
+
+                  {/* RIGHT BUTTONS */}
+                  <div className="flex gap-2 flex-wrap justify-end">
+
+                    <button
+                      onClick={() => editCustomer(c)}
+                      className="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md"
+                    >
+                      Edit
                     </button>
 
                     <button
-                      onClick={resetForm}
-                      className="flex-1 bg-gray-200 py-3 rounded-xl"
+                      onClick={() => renewCustomer(c.id)}
+                      className="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md"
                     >
-                      Cancel
+                      Renew
                     </button>
+
+                    <button
+                      onClick={() => setDeleteId(c.id)}
+                      className="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-md"
+                    >
+                      Delete
+                    </button>
+
                   </div>
 
                 </div>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* DELETE MODAL */}
-        {deleteId && (
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50">
-            <div className="bg-white/80 backdrop-blur-xl p-6 rounded-2xl shadow-xl w-[320px] text-center">
-              <h2 className="text-lg font-semibold mb-4">
-                Delete this customer?
-              </h2>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={confirmDelete}
-                  className="flex-1 bg-red-500 text-white py-2 rounded-lg"
-                >
-                  Delete
-                </button>
-
-                <button
-                  onClick={() => setDeleteId(null)}
-                  className="flex-1 bg-gray-200 py-2 rounded-lg"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* LIST */}
-        {/* LIST */}
-<div className="space-y-4">
-  {filteredCustomers.map((c) => {
-    const expired = new Date(c.expiryDate) < new Date();
-
-    return (
-      <div
-        key={c.id}
-        className="p-[2px] rounded-2xl bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500"
-      >
-        <div className="bg-white/80 backdrop-blur-xl p-5 rounded-2xl flex justify-between items-center shadow-lg">
-
-          {/* LEFT SIDE */}
-          <div>
-            <h2 className="font-semibold text-lg text-gray-900">
-              {c.name}
-            </h2>
-
-            <p className="text-sm text-gray-600">{c.phone}</p>
-
-            <p className="text-xs text-indigo-600">
-              OTT: {c.ottNumber || "-"}
-            </p>
-
-            <p className="text-xs text-gray-500">
-              Exp: {new Date(c.expiryDate).toLocaleDateString()}
-            </p>
-          </div>
-
-          {/* RIGHT SIDE */}
-          <div className="flex items-center gap-2 flex-wrap">
-
-            {/* STATUS */}
-            <span
-              className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                expired
-                  ? "bg-red-100 text-red-600"
-                  : "bg-green-100 text-green-600"
-              }`}
-            >
-              {expired ? "Expired" : "Active"}
-            </span>
-
-            {/* EDIT */}
-            <button
-              onClick={() => editCustomer(c)}
-              className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
-            >
-              Edit
-            </button>
-
-            {/* RENEW */}
-            <button
-              onClick={() => renewCustomer(c.id)}
-              className="px-3 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition"
-            >
-              Renew
-            </button>
-
-            {/* DELETE */}
-            <button
-              onClick={() => setDeleteId(c.id)}
-              className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition"
-            >
-              Delete
-            </button>
-
-          </div>
-
+            );
+          })}
         </div>
+
       </div>
-    );
-  })}
-</div>
-      </div>
+
+      {/* DELETE CONFIRM */}
+      {deleteId && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl text-center">
+            <p className="mb-4">Delete this customer?</p>
+            <div className="flex gap-2">
+              <button
+                onClick={confirmDelete}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setDeleteId(null)}
+                className="bg-gray-300 px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL */}
+      {showModal && (
+        <div
+          onClick={resetForm}
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-[350px] p-[2px] rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500"
+          >
+            <div className="bg-white rounded-2xl p-6">
+
+              <input
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full p-3 border rounded-xl mb-3"
+              />
+
+              <input
+                placeholder="Phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full p-3 border rounded-xl mb-3"
+              />
+
+              <select
+                value={planId}
+                onChange={(e) => setPlanId(e.target.value)}
+                className="w-full p-3 border rounded-xl mb-3"
+              >
+                <option value="">Select Plan</option>
+                {uniquePlans.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                placeholder="OTT Number"
+                value={ottNumber}
+                onChange={(e) => setOttNumber(e.target.value)}
+                className="w-full p-3 border rounded-xl mb-3"
+              />
+
+              <input
+  type="date"
+  value={startDate}
+  onChange={(e) => setStartDate(e.target.value)}
+  className="w-full p-3 border rounded-xl mb-3"
+/>
+
+              <button
+                onClick={saveCustomer}
+                className="w-full bg-purple-600 text-white py-2 rounded-xl"
+              >
+                Save
+              </button>
+
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -13,12 +13,18 @@ model Plan {
   price     Int
   image     String?
   duration  Int      @default(30)
+
   category  String   @default("ALL")
+
+  // 🔥 NEW: links all copies of same plan
+  groupId   String
+
   createdAt DateTime @default(now())
 
   customers Customer[]
 
-  @@unique([name, price, category]) // ✅ FIXED
+  // 🔥 IMPORTANT: allow same name in different categories but same group
+  @@unique([name, price, category, groupId])
 }
 
 model Customer {
@@ -36,4 +42,5 @@ model Customer {
   plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
 
   @@index([phone])
+  @@index([ottNumber])
 }

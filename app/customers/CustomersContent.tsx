@@ -224,7 +224,7 @@ const matchesSearch =
                 key={c.id}
                 className="p-[2px] rounded-2xl bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500"
               >
-                <div className="bg-white p-4 rounded-2xl flex justify-between items-center">
+                <div className="bg-white p-2 md:p-3 rounded-2xl flex justify-between items-start gap-2">
 
                   {/* LEFT */}
                   <div>

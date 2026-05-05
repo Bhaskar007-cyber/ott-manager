@@ -66,9 +66,12 @@ export default function CustomersContent() {
   const expired = new Date(c.expiryDate) < new Date();
 
   // 🔍 SEARCH FILTER
-  const matchesSearch =
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.phone.includes(search);
+ const searchValue = search.toLowerCase();
+
+const matchesSearch =
+  c.name.toLowerCase().includes(searchValue) ||
+  String(c.phone).includes(searchValue) ||
+  String(c.ottNumber).includes(searchValue);
 
   // 🎯 STATUS FILTER
   if (status === "active") return !expired && matchesSearch;

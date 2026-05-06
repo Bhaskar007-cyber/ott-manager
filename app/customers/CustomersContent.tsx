@@ -11,6 +11,10 @@ type Customer = {
   expiryDate: string;
   startDate?: string;
   ottNumber?: string;
+
+  plan?: {
+  image?: string | null;
+};
 };
 
 type Plan = {
@@ -34,6 +38,7 @@ export default function CustomersContent() {
   const [ottNumber, setOttNumber] = useState("");
   const [startDate, setStartDate] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
   const status = searchParams.get("status");
@@ -185,7 +190,7 @@ const matchesSearch =
   if (loading) return <div className="p-6">Loading...</div>;
 
   return (
-    <div className="min-h-screen p-3 md:p-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
+    <div className="min-h-screen p-3 md:p-6 bg-[#f5f7fb]">
       <div className="max-w-5xl mx-auto">
 
         {/* HEADER */}
@@ -221,62 +226,84 @@ const matchesSearch =
 
             return (
               <div
-                key={c.id}
-                className="p-[2px] rounded-2xl bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500"
-              >
-                <div className="bg-white p-2 md:p-3 rounded-2xl flex justify-between items-start gap-2">
+  key={c.id}
+  className="bg-white rounded-xl p-4 shadow-md border border-gray-100 transition-all active:scale-[0.98]"
+>
+  {/* TOP */}
+  <div className="flex justify-between items-start gap-3">
 
-                  {/* LEFT */}
-                  <div>
-                    <h2 className="font-semibold">{c.name}</h2>
-                    <p className="text-sm text-gray-600">{c.phone}</p>
-                    <p className="text-xs text-indigo-600">
-                      OTT: {c.ottNumber || "-"}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Exp: {new Date(c.expiryDate).toLocaleDateString()}
-                    </p>
+    {/* LEFT INFO */}
+    <div className="flex-1 min-w-0">
 
-                    {/* STATUS */}
-                    <span
-                      className={`inline-block mt-2 px-3 py-1 text-xs rounded-full font-semibold ${
-                        expired
-                          ? "bg-red-100 text-red-600"
-                          : "bg-green-100 text-green-600"
-                      }`}
-                    >
-                      {expired ? "Expired" : "Active"}
-                    </span>
-                  </div>
+      <h2 className="text-sm font-semibold text-gray-800 leading-tight break-words">
+        {c.name}
+      </h2>
 
-                  {/* RIGHT BUTTONS */}
-                  <div className="flex gap-2 flex-wrap justify-end">
+      <p className="text-xs text-gray-500 mt-1">
+        {c.phone}
+      </p>
 
-                    <button
-                      onClick={() => editCustomer(c)}
-                      className="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md"
-                    >
-                      Edit
-                    </button>
+      <p className="text-xs text-indigo-600 mt-1">
+        OTT: {c.ottNumber || "-"}
+      </p>
 
-                    <button
-                      onClick={() => renewCustomer(c.id)}
-                      className="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md"
-                    >
-                      Renew
-                    </button>
+      <p className="text-[11px] text-gray-400 mt-1">
+        Exp: {new Date(c.expiryDate).toLocaleDateString()}
+      </p>
+    </div>
 
-                    <button
-                      onClick={() => setDeleteId(c.id)}
-                      className="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-md"
-                    >
-                      Delete
-                    </button>
+    <div className="flex flex-col items-end gap-2 shrink-0">
 
-                  </div>
+  {/* STATUS */}
+  <span
+    className={`text-[10px] px-2 py-1 rounded-full font-medium ${
+      expired
+        ? "bg-red-100 text-red-600"
+        : "bg-green-100 text-green-600"
+    }`}
+  >
+    {expired ? "Expired" : "Active"}
+  </span>
 
-                </div>
-              </div>
+  {/* PLAN IMAGE */}
+  {c.plan?.image && (
+    <img
+  src={c.plan.image}
+  alt="plan"
+  onClick={() => setPreviewImage(c.plan?.image || null)}
+  className="w-12 h-12 rounded-xl object-cover border border-gray-200 shadow-sm cursor-pointer hover:scale-105 transition"
+/>
+  )}
+
+</div>
+  </div>
+
+  {/* BUTTONS */}
+  <div className="flex gap-2 mt-4">
+
+    <button
+      onClick={() => editCustomer(c)}
+      className="flex-1 py-2 text-xs rounded-lg bg-[#2563eb] text-white font-medium"
+    >
+      Edit
+    </button>
+
+    <button
+      onClick={() => renewCustomer(c.id)}
+      className="flex-1 py-2 text-xs rounded-lg bg-[#7c3aed] text-white font-medium"
+    >
+      Renew
+    </button>
+
+    <button
+      onClick={() => setDeleteId(c.id)}
+      className="flex-1 py-2 text-xs rounded-lg bg-[#dc2626] text-white font-medium"
+    >
+      Delete
+    </button>
+
+  </div>
+</div>
             );
           })}
         </div>
@@ -370,6 +397,25 @@ const matchesSearch =
           </div>
         </div>
       )}
+
+      {/* IMAGE PREVIEW */}
+{previewImage && (
+  <div
+    onClick={() => setPreviewImage(null)}
+    className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+  >
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="bg-white p-3 rounded-2xl shadow-xl"
+    >
+      <img
+        src={previewImage}
+        alt="preview"
+        className="w-64 rounded-xl object-cover"
+      />
+    </div>
+  </div>
+)}
     </div>
   );
 }

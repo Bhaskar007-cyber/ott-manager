@@ -180,7 +180,7 @@ export default function PlansPage() {
   };
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
+    <div className="min-h-screen p-4 md:p-6 bg-[#f5f7fb]">
 
       {/* HEADER */}
       <div className="flex justify-between items-center mb-5">
@@ -195,7 +195,7 @@ export default function PlansPage() {
     placeholder="Search..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
-    className="flex-[0.7] min-w-0 p-3 rounded-xl border"
+    className="flex-1 min-w-0 p-3 rounded-2xl border border-gray-200 bg-white shadow-sm outline-none"
   />
 
   <button
@@ -260,8 +260,8 @@ export default function PlansPage() {
       {/* GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
         {filteredPlans.map((p) => (
-          <div key={p.id} className="p-[2px] rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">
-            <div className="bg-white p-2 md:p-3 rounded-xl relative">
+          <div key={p.id} className="bg-white border border-gray-200 rounded-3xl shadow-sm hover:shadow-md transition">
+            <div className="p-4 relative">
 
               <div className="absolute right-2 top-2">
                 <button
@@ -270,7 +270,7 @@ export default function PlansPage() {
                     setMenuOpen(menuOpen === p.id ? null : p.id);
                   }}
                 >
-                  <MoreVertical size={16} />
+                  <MoreVertical size={18} className="text-gray-500" />
                 </button>
 
                 {menuOpen === p.id && (
@@ -302,15 +302,15 @@ export default function PlansPage() {
                 <img
                   src={p.image}
                   onClick={() => setPreviewImage(p.image)}
-                  className="w-8 h-8 rounded-full cursor-pointer"
+                  className="w-12 h-12 rounded-2xl object-cover mb-3 cursor-pointer border border-gray-200"
                 />
               )}
 
-              <h2 className="font-medium text-[11px] md:text-sm text-gray-800 leading-snug">
+              <h2 className="font-semibold text-sm md:text-base text-gray-900 leading-snug">
   {p.name}
 </h2>
 
-<p className="text-xs text-gray-400 mt-1">
+<p className="text-xs text-gray-500 mt-1">
   Subscription plan
 </p>
 
@@ -362,9 +362,9 @@ export default function PlansPage() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-[350px] p-[2px] rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500"
+            className="w-[350px] bg-white rounded-3xl shadow-2xl"
           >
-            <div className="bg-white rounded-2xl p-6">
+            <div className="p-6">
 
               <input
                 placeholder="Name"

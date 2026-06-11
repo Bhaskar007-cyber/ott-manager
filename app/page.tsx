@@ -24,6 +24,14 @@ type Plan = {
   price: number;
 };
 
+type WifiPlan = {
+  id: number;
+  name: string;
+  speed: string;
+  image: string;
+  hiddenImage?: string;
+};
+
 // ✅ COMPACT CARD
 type CardProps = {
   title: string;
@@ -48,8 +56,9 @@ function Card({ title, value, gradient, link }: CardProps) {
 
 export default function Dashboard() {
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [loading, setLoading] = useState(true);
+const [plans, setPlans] = useState<Plan[]>([]);
+const [wifiPlans, setWifiPlans] = useState<WifiPlan[]>([]);
+const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     try {
@@ -58,6 +67,12 @@ export default function Dashboard() {
 
       setCustomers(data.customers || []);
       setPlans(data.plans || []);
+
+      const wifiRes = await fetch("/api/wifi");
+const wifiData = await wifiRes.json();
+
+setWifiPlans(wifiData || []);
+
     } catch (err) {
       console.error(err);
     } finally {
@@ -124,11 +139,12 @@ export default function Dashboard() {
       </h1>
 
       {/* CARDS */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 mb-5">
         <Card title="Revenue" value={`₹${revenue}`} gradient="bg-blue-600" link="/revenue" />
         <Card title="Customers" value={customers.length} gradient="bg-gray-600" link="/customers" />
         <Card title="Active" value={active.length} gradient="bg-green-600" link="/customers?status=active" />
         <Card title="Expired" value={expired.length} gradient="bg-red-600" link="/customers?status=expired" />
+        <Card title="WiFi Plans" value={wifiPlans.length} gradient="bg-cyan-600" link="/wifi"/>
       </div>
 
       {/* CHART */}
@@ -186,6 +202,43 @@ export default function Dashboard() {
               );
             })
           )}
+          {/* WIFI PLANS */}
+<div className="col-span-full">
+  <h2 className="text-lg font-bold mb-4 mt-4">
+    WiFi Plans
+  </h2>
+
+  <div className="grid md:grid-cols-2 gap-4">
+    {wifiPlans.map((plan) => (
+      <div
+        key={plan.id}
+        className="bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow"
+      >
+        <img
+          src={plan.image}
+          className="w-full h-40 object-cover rounded-xl"
+        />
+
+        {plan.hiddenImage && (
+          <img
+            src={plan.hiddenImage}
+            className="w-full h-40 object-cover rounded-xl blur-md mt-3"
+          />
+        )}
+
+        <div className="mt-3">
+          <h3 className="font-bold">
+            {plan.name}
+          </h3>
+
+          <p className="text-blue-600">
+            {plan.speed}
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
         </div>
 
         {/* PLANS */}

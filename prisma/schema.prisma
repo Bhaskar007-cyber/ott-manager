@@ -44,3 +44,10 @@ model Customer {
   @@index([phone])
   @@index([ottNumber])
 }
+
+model WifiPlan {
+  id          Int      @id @default(autoincrement())
+  name        String
+  hiddenImage String?
+  createdAt   DateTime @default(now())
+}

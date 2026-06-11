@@ -72,7 +72,17 @@ export default function WifiPage() {
         <h1 className="text-3xl font-bold">
           WiFi Plans
         </h1>
-
+        <button
+  onClick={() => {
+    alert(
+      "PublicKeyCredential supported: " +
+      !!window.PublicKeyCredential
+    );
+  }}
+  className="bg-red-500 text-white px-4 py-2 rounded-xl mb-4"
+>
+  Check Fingerprint Support
+</button>
         <button
           onClick={() => setShowModal(true)}
           className="bg-blue-600 text-white px-4 py-2 rounded-xl"

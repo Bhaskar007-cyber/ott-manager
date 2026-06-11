@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { startRegistration } from "@simplewebauthn/browser";
+import { startAuthentication } from "@simplewebauthn/browser";
 type WifiPlan = {
   id: number;
   image: string;
@@ -196,25 +197,19 @@ alert(JSON.stringify(data));
                   <button
                     onClick={async () => {
   try {
-    await navigator.credentials.get({
-      publicKey: {
-        challenge: new Uint8Array(32),
-        userVerification: "required",
-        timeout: 60000,
-        allowCredentials: []
-      }
+    const options = await fetch(
+      "/api/auth/login-start"
+    ).then((r) => r.json());
+
+    await startAuthentication({
+      optionsJSON: options,
     });
 
     setUnlocked(plan.id);
   } catch (err) {
-  console.log(err);
-
-  if (err instanceof Error) {
-    alert(err.message);
-  } else {
-    alert("Fingerprint failed");
+    console.log(err);
+    alert("Fingerprint verification failed");
   }
-}
 }}
                     className="absolute inset-0 flex items-center justify-center bg-black/30 text-white font-bold rounded-xl"
                   >

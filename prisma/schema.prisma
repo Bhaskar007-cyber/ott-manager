@@ -51,3 +51,10 @@ model WifiPlan {
   hiddenImage String?
   createdAt   DateTime @default(now())
 }
+
+model Passkey {
+  id           Int    @id @default(autoincrement())
+  credentialID String @unique
+  publicKey    String
+  counter      Int
+}

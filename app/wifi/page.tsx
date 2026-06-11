@@ -94,7 +94,10 @@ export default function WifiPage() {
     });
 
     console.log(attResp);
-    alert("Passkey registered");
+
+alert(
+  JSON.stringify(attResp, null, 2)
+);
   }}
   className="bg-green-600 text-white px-4 py-2 rounded-xl"
 >

@@ -68,60 +68,55 @@ export default function WifiPage() {
 }, []);
 
   return (
-    <div className="p-6">
-      <div className="flex flex-col md:flex-row gap-3 md:gap-0 justify-between items-center mb-6">
-        <div className="w-full flex flex-col md:flex-row justify-between items-center gap-3">
+    <div className="p-4 md:p-6 max-w-6xl mx-auto">
+      <div className="mb-6">
 
-  <h1 className="text-3xl font-bold">
+  <h1 className="text-4xl font-bold text-center mb-5">
     WiFi Plans
   </h1>
 
-  <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+  <div className="flex flex-col sm:flex-row gap-3">
 
     <button
-      className="bg-green-600 text-white px-4 py-2 rounded-xl"
+      onClick={async () => {
+        const options = await fetch(
+          "/api/auth/register-start"
+        ).then((r) => r.json());
+
+        const attResp = await startRegistration({
+          optionsJSON: options,
+        });
+
+        const res = await fetch(
+          "/api/auth/register-finish",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(attResp),
+          }
+        );
+
+        const data = await res.json();
+
+        alert(JSON.stringify(data));
+      }}
+      className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold"
     >
       Register Passkey
     </button>
+
+    <button
+      onClick={() => setShowModal(true)}
+      className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold"
+    >
+      + Add WiFi Plan
+    </button>
+
   </div>
 
 </div>
-<button
-  onClick={async () => {
-    const options = await fetch(
-      "/api/auth/register-start"
-    ).then((r) => r.json());
-
-    const attResp = await startRegistration({
-  optionsJSON: options,
-});
-
-const res = await fetch(
-  "/api/auth/register-finish",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(attResp),
-  }
-);
-
-const data = await res.json();
-
-alert(JSON.stringify(data));
-  }}
-   className="w-full md:w-auto bg-green-600 text-white px-4 py-2 rounded-xl"
->
-  Register Passkey
-</button>
-        <button
-          onClick={() => setShowModal(true)}
-          className="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded-xl"
-        >
-          + Add WiFi Plan
-        </button>
-      </div>
 
       <div className="grid md:grid-cols-2 gap-4">
         {plans.map((plan) => (
@@ -176,7 +171,7 @@ alert(JSON.stringify(data));
               <img
                 src={plan.image}
                 alt=""
-                className="w-full h-auto md:h-48 object-contain rounded-xl"
+                className="w-full rounded-xl"
               />
             )}
 
@@ -186,14 +181,14 @@ alert(JSON.stringify(data));
                 <img
                   src={plan.hiddenImage}
                   alt=""
-                  className="w-full h-48 object-cover rounded-xl mt-3"
+                  className="w-full rounded-xl"
                 />
               ) : (
                 <div className="relative mt-3">
                   <img
                     src={plan.hiddenImage}
                     alt=""
-                    className="w-full h-48 object-cover rounded-xl blur-md"
+                    className="w-full rounded-xl"
                   />
 
                   <button
@@ -230,7 +225,7 @@ alert(JSON.stringify(data));
           onClick={() => setShowModal(false)}
         >
           <div
-            className="bg-white p-6 rounded-2xl w-[400px]"
+            className="bg-white p-6 rounded-2xl w-[95%] max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-end mb-3">

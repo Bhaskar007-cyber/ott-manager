@@ -165,15 +165,28 @@ export default function WifiPage() {
                   />
 
                   <button
-                    onClick={() => {
-                      const ok = window.confirm(
-                        "Verify fingerprint to view image"
-                      );
+                    onClick={async () => {
+  try {
+    await navigator.credentials.get({
+      publicKey: {
+        challenge: new Uint8Array(32),
+        userVerification: "required",
+        timeout: 60000,
+        allowCredentials: []
+      }
+    });
 
-                      if (ok) {
-                        setUnlocked(plan.id);
-                      }
-                    }}
+    setUnlocked(plan.id);
+  } catch (err) {
+  console.log(err);
+
+  if (err instanceof Error) {
+    alert(err.message);
+  } else {
+    alert("Fingerprint failed");
+  }
+}
+}}
                     className="absolute inset-0 flex items-center justify-center bg-black/30 text-white font-bold rounded-xl"
                   >
                     🔒 Unlock with Fingerprint

@@ -68,17 +68,18 @@ export default function WifiPage() {
 }, []);
 
   return (
-    <div className="p-4 md:p-6 max-w-6xl mx-auto">
+    <div className="flex justify-between items-center mb-5">
       <div className="mb-6">
 
-  <h1 className="text-4xl font-bold text-center mb-5">
-    WiFi Plans
-  </h1>
+  <h1 className="text-2xl md:text-3xl font-bold"> WiFi Plans
 
-  <div className="flex flex-col sm:flex-row gap-3">
+</h1>
 
-    <button
-      onClick={async () => {
+  <div className="flex gap-2">
+
+<button
+
+onClick={async () => {
         const options = await fetch(
           "/api/auth/register-start"
         ).then((r) => r.json());
@@ -102,16 +103,16 @@ export default function WifiPage() {
 
         alert(JSON.stringify(data));
       }}
-      className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold"
+      className="bg-green-600 text-white px-4 py-2 rounded-xl text-sm"
     >
-      Register Passkey
+      Passkey
     </button>
 
     <button
       onClick={() => setShowModal(true)}
-      className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold"
+      className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm"
     >
-      + Add WiFi Plan
+      +Plan
     </button>
 
   </div>
@@ -122,7 +123,7 @@ export default function WifiPage() {
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className="bg-white rounded-3xl shadow-xl p-3 md:p-4 relative overflow-hidden"
+            className="bg-white rounded-2xl shadow-lg p-2 relative overflow-hidden"
           >
             {/* 3 DOTS MENU */}
             <div className="absolute top-3 right-3">
@@ -181,14 +182,14 @@ export default function WifiPage() {
                 <img
                   src={plan.hiddenImage}
                   alt=""
-                  className="w-full rounded-xl"
+                  className="w-full rounded-xl blur-md"
                 />
               ) : (
                 <div className="relative mt-3">
                   <img
                     src={plan.hiddenImage}
                     alt=""
-                    className="w-full rounded-xl"
+                    className="w-full rounded-xl blur-md"
                   />
 
                   <button
@@ -208,7 +209,7 @@ export default function WifiPage() {
     alert("Fingerprint verification failed");
   }
 }}
-                    className="absolute inset-0 flex items-center justify-center text-center bg-black/40 text-white text-lg font-bold rounded-xl px-4"
+                    className="absolute inset-0 flex items-center justify-center text-center bg-black/40 text-white text-sm md:text-lg font-bold rounded-xl px-4"
                   >
                     🔒 Unlock with Fingerprint
                   </button>

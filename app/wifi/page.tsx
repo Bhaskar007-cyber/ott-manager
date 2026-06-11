@@ -66,20 +66,18 @@ export default function WifiPage() {
 
   load();
 }, []);
-
-  return (
-    <div className="flex justify-between items-center mb-5">
+    return (
+  <div className="max-w-6xl mx-auto p-4">
       <div className="mb-6">
 
-  <h1 className="text-2xl md:text-3xl font-bold"> WiFi Plans
-
-</h1>
+  <h1 className="text-3xl font-bold mb-4">
+    WiFi Plans
+  </h1>
 
   <div className="flex gap-2">
 
-<button
-
-onClick={async () => {
+    <button
+      onClick={async () => {
         const options = await fetch(
           "/api/auth/register-start"
         ).then((r) => r.json());
@@ -103,27 +101,27 @@ onClick={async () => {
 
         alert(JSON.stringify(data));
       }}
-      className="bg-green-600 text-white px-4 py-2 rounded-xl text-sm"
+      className="bg-green-600 text-white px-4 py-2 rounded-xl"
     >
       Passkey
     </button>
 
     <button
       onClick={() => setShowModal(true)}
-      className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm"
+      className="bg-blue-600 text-white px-4 py-2 rounded-xl"
     >
-      +Plan
+      + Plan
     </button>
 
   </div>
 
 </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className="bg-white rounded-2xl shadow-lg p-2 relative overflow-hidden"
+            className="w-full bg-white rounded-2xl shadow-lg p-3 relative overflow-hidden"
           >
             {/* 3 DOTS MENU */}
             <div className="absolute top-3 right-3">
@@ -179,12 +177,12 @@ onClick={async () => {
             {/* HIDDEN IMAGE */}
             {plan.hiddenImage &&
               (unlocked === plan.id ? (
-                <img
-                  src={plan.hiddenImage}
-                  alt=""
-                  className="w-full rounded-xl blur-md"
-                />
-              ) : (
+  <img
+    src={plan.hiddenImage}
+    alt=""
+    className="w-full rounded-xl"
+  />
+) : (
                 <div className="relative mt-3">
                   <img
                     src={plan.hiddenImage}

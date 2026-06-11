@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import { startRegistration } from "@simplewebauthn/browser";
 type WifiPlan = {
   id: number;
   image: string;
@@ -82,6 +82,23 @@ export default function WifiPage() {
   className="bg-red-500 text-white px-4 py-2 rounded-xl mb-4"
 >
   Check Fingerprint Support
+</button>
+<button
+  onClick={async () => {
+    const options = await fetch(
+      "/api/auth/register-start"
+    ).then((r) => r.json());
+
+    const attResp = await startRegistration({
+      optionsJSON: options,
+    });
+
+    console.log(attResp);
+    alert("Passkey registered");
+  }}
+  className="bg-green-600 text-white px-4 py-2 rounded-xl"
+>
+  Register Passkey
 </button>
         <button
           onClick={() => setShowModal(true)}

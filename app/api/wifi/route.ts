@@ -16,8 +16,6 @@ export async function POST(req: Request) {
 
   const wifiPlan = await prisma.wifiPlan.create({
     data: {
-      name: body.name,
-      speed: body.speed,
       image: body.image,
       hiddenImage: body.hiddenImage,
     },

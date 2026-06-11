@@ -47,7 +47,7 @@ model Customer {
 
 model WifiPlan {
   id          Int      @id @default(autoincrement())
-  name        String
+  image       String?
   hiddenImage String?
   createdAt   DateTime @default(now())
 }

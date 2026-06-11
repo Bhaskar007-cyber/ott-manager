@@ -13,6 +13,8 @@ export default function WifiPage() {
   const [plans, setPlans] = useState<WifiPlan[]>([]);
   const [menuOpen, setMenuOpen] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [previewImage, setPreviewImage] =
+  useState<string | null>(null);
 
   const [image, setImage] = useState("");
   const [hiddenImage, setHiddenImage] = useState("");
@@ -168,20 +170,26 @@ export default function WifiPage() {
             {/* MAIN IMAGE */}
             {plan.image && (
               <img
-                src={plan.image}
-                alt=""
-                className="w-full rounded-xl"
-              />
+  src={plan.image}
+  alt=""
+  onClick={() =>
+    setPreviewImage(plan.image)
+  }
+  className="w-full rounded-xl cursor-pointer"
+/>
             )}
 
             {/* HIDDEN IMAGE */}
             {plan.hiddenImage &&
               (unlocked === plan.id ? (
   <img
-    src={plan.hiddenImage}
-    alt=""
-    className="w-full rounded-xl"
-  />
+  src={plan.hiddenImage}
+  alt=""
+  onClick={() =>
+    setPreviewImage(plan.hiddenImage!)
+  }
+  className="w-full rounded-xl cursor-pointer"
+/>
 ) : (
                 <div className="relative mt-3">
                   <img
@@ -218,6 +226,23 @@ export default function WifiPage() {
       </div>
 
       {/* MODAL */}
+      {previewImage && (
+  <div
+    className="fixed inset-0 bg-black/80 z-[999] flex items-center justify-center p-4"
+    onClick={() =>
+      setPreviewImage(null)
+    }
+  >
+    <img
+      src={previewImage}
+      alt=""
+      className="max-w-full max-h-[90vh] rounded-xl"
+      onClick={(e) =>
+        e.stopPropagation()
+      }
+    />
+  </div>
+)}
       {showModal && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"

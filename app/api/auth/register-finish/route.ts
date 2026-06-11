@@ -1,7 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function POST(
+  req: NextRequest
+) {
+  const body = await req.json();
+
+  console.log(body);
+
   return NextResponse.json({
-    message: "Coming soon",
+    success: true,
+    credentialID: body.id,
   });
 }

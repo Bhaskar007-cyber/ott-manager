@@ -90,14 +90,23 @@ export default function WifiPage() {
     ).then((r) => r.json());
 
     const attResp = await startRegistration({
-      optionsJSON: options,
-    });
+  optionsJSON: options,
+});
 
-    console.log(attResp);
-
-alert(
-  JSON.stringify(attResp, null, 2)
+const res = await fetch(
+  "/api/auth/register-finish",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(attResp),
+  }
 );
+
+const data = await res.json();
+
+alert(JSON.stringify(data));
   }}
   className="bg-green-600 text-white px-4 py-2 rounded-xl"
 >

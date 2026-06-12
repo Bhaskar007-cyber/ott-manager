@@ -53,7 +53,16 @@ export async function POST(
       verified: verification.verified,
     });
   } catch (error) {
-    console.log(error);
+  console.error("LOGIN ERROR:", error);
+
+  return NextResponse.json(
+    {
+      verified: false,
+      error: String(error),
+    },
+    { status: 500 }
+  );
+
 
     return NextResponse.json(
       { verified: false },

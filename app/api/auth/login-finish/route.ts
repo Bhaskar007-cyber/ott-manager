@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {
+  
   verifyAuthenticationResponse,
 } from "@simplewebauthn/server";
 import { getChallenge } from "@/lib/webauthn";
@@ -24,8 +25,9 @@ export async function POST(
         { status: 404 }
       );
     }
-
+    console.log("Challenge:", getChallenge());
     const verification =
+
       await verifyAuthenticationResponse({
         response: body,
 

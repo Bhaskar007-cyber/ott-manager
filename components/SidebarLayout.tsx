@@ -65,7 +65,7 @@ export default function SidebarLayout({
       </div>
 
       {/* ================= DESKTOP SIDEBAR ================= */}
-      <aside className="hidden md:flex flex-col w-64 bg-white/30 backdrop-blur-xl border-r border-white/20 p-6">
+      <aside className="hidden md:flex flex-col w-72 bg-white border-r border-white/20 p-8">
 
         <h2 className="text-xl font-bold mb-10 tracking-tight">
           OTT Manager

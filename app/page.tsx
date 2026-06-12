@@ -202,43 +202,7 @@ setWifiPlans(wifiData || []);
               );
             })
           )}
-          {/* WIFI PLANS */}
-<div className="col-span-full">
-  <h2 className="text-lg font-bold mb-4 mt-4">
-    WiFi Plans
-  </h2>
 
-  <div className="grid md:grid-cols-2 gap-4">
-    {wifiPlans.map((plan) => (
-      <div
-        key={plan.id}
-        className="bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow"
-      >
-        <img
-          src={plan.image}
-          className="w-full h-40 object-cover rounded-xl"
-        />
-
-        {plan.hiddenImage && (
-          <img
-            src={plan.hiddenImage}
-            className="w-full h-40 object-cover rounded-xl blur-md mt-3"
-          />
-        )}
-
-        <div className="mt-3">
-          <h3 className="font-bold">
-            {plan.name}
-          </h3>
-
-          <p className="text-blue-600">
-            {plan.speed}
-          </p>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
         </div>
 
         {/* PLANS */}

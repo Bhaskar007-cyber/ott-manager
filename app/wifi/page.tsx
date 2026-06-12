@@ -202,14 +202,33 @@ export default function WifiPage() {
                     onClick={async () => {
   try {
     const options = await fetch(
-      "/api/auth/login-start"
-    ).then((r) => r.json());
+  "/api/auth/login-start"
+).then((r) => r.json());
 
-    await startAuthentication({
-      optionsJSON: options,
-    });
+const authResp =
+  await startAuthentication({
+    optionsJSON: options,
+  });
 
-    setUnlocked(plan.id);
+const verify = await fetch(
+  "/api/auth/login-finish",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type":
+        "application/json",
+    },
+    body: JSON.stringify(authResp),
+  }
+);
+
+const result = await verify.json();
+
+if (result.verified) {
+  setUnlocked(plan.id);
+} else {
+  alert("Authentication failed");
+}
   } catch (err) {
     console.log(err);
     alert("Fingerprint verification failed");

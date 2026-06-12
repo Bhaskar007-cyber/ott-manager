@@ -3,11 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { generateAuthenticationOptions } from "@simplewebauthn/server";
 
 export async function GET() {
-  const passkey = await prisma.passkey.findFirst();
+  const passkeys = await prisma.passkey.findMany();
 
-  if (!passkey) {
+  if (!passkeys.length) {
     return NextResponse.json(
-      { error: "No passkey found" },
+      { error: "No passkeys found" },
       { status: 404 }
     );
   }
@@ -15,12 +15,12 @@ export async function GET() {
   const options =
     await generateAuthenticationOptions({
       rpID: "ott-manager-mu.vercel.app",
-      allowCredentials: [
-        {
-          id: passkey.credentialID,
-          transports: ["internal"],
-        },
-      ],
+
+      allowCredentials: passkeys.map((p) => ({
+        id: p.credentialID,
+        transports: ["internal"],
+      })),
+
       userVerification: "required",
     });
 

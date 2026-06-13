@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { MoreVertical, Plus } from "lucide-react";
+import { Search } from "lucide-react";
+import { Bell } from "lucide-react";
 
 type Plan = {
   id: number;
@@ -183,35 +185,92 @@ export default function PlansPage() {
     <div className="min-h-screen p-4 md:p-6 bg-[#f5f7fb]">
 
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-5">
-        <h1 className="text-2xl font-bold">Plans</h1>
+     <div className="flex justify-between items-center mb-5">
 
-       
-      </div>
+  <h1 className="text-2xl font-bold">
+    Plans
+  </h1>
+
+  <div className="relative">
+
+    <Bell size={24} />
+
+    <span
+      className="
+      absolute
+      -top-1
+      -right-1
+      w-4
+      h-4
+      rounded-full
+      bg-red-500
+      text-white
+      text-[10px]
+      flex
+      items-center
+      justify-center
+      "
+    >
+      1
+    </span>
+
+  </div>
+
+</div>
 
       {/* SEARCH */}
-      <div className="flex items-center gap-2 mb-4">
-  <input
-    placeholder="Search..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-    className="flex-1 min-w-0 p-3 rounded-2xl border border-gray-200 bg-white shadow-sm outline-none"
-  />
+    <div className="flex items-center gap-3 mb-5">
+
+  <div className="relative flex-1">
+
+    <Search
+      size={18}
+      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+    />
+
+    <input
+      placeholder="Search plans..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="
+      w-full
+      pl-11
+      h-12
+      rounded-2xl
+      border
+      border-gray-200
+      bg-white
+      "
+    />
+
+  </div>
 
   <button
     onClick={() => setShowModal(true)}
-    className="flex-shrink-0 whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-3 py-2 rounded-xl shadow-md"
+  className="
+  whitespace-nowrap
+  px-4
+  h-10
+  rounded-2xl
+  bg-gradient-to-r
+  from-purple-600
+  to-indigo-600
+  text-white
+  font-medium
+  shadow-lg
+  "
+
   >
     + Add Plan
   </button>
+
 </div>
       
 
       {/* TABS */}
-<div className="flex justify-between items-start mb-4">
+<div className="flex justify-between items-center mb-5">
 
-  {/* LEFT SIDE - TABS */}
-  <div className="flex gap-2 flex-wrap">
+  <div className="flex gap-2">
     {[
       { key: "ALL", label: "All" },
       { key: "ALL_IN_ONE", label: "All-in-One" },
@@ -220,10 +279,10 @@ export default function PlansPage() {
       <button
         key={t.key}
         onClick={() => setTab(t.key)}
-        className={`px-3 py-1 text-xs rounded-full ${
+        className={`px-2 h-10 rounded-full text-sm ${
           tab === t.key
-            ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
-            : "bg-white border"
+            ? "bg-purple-600 text-white"
+            : "bg-white border border-gray-200"
         }`}
       >
         {t.label}
@@ -231,94 +290,130 @@ export default function PlansPage() {
     ))}
   </div>
 
-  {/* RIGHT SIDE - SORT + ADD */}
-  <div className="flex flex-col items-end gap-2">
+  <select
+    value={sort}
+    onChange={(e) => setSort(e.target.value)}
+    className="h-10 px-1 rounded-xl border border-gray-300 bg-white"
+  >
+    <option value="low">Low → High</option>
+    <option value="high">High → Low</option>
+  </select>
 
-    {/* SORT */}
-    <select
-      value={sort}
-      onChange={(e) => setSort(e.target.value)}
-      className="px-3 py-2 rounded-xl border bg-white text-sm shadow-sm"
-    >
-      <option value="low">Price: Low → High</option>
-      <option value="high">Price: High → Low</option>
-    </select>
-
-    {/* ADD BUTTON (only for sections) */}
-    {tab !== "ALL" && (
-      <button
-        onClick={() => setShowPicker(true)}
-        className="px-3 py-1 text-xs rounded-full bg-green-500 text-white hover:scale-105 transition"
-      >
-        + Add
-      </button>
-    )}
-
-  </div>
 </div>
 
       {/* GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
+      <div className="space-y-3">
         {filteredPlans.map((p) => (
-          <div key={p.id} className="bg-white border border-gray-200 rounded-3xl shadow-sm hover:shadow-md transition">
-            <div className="p-4 relative">
+          <div key={p.id} 
+className="
+bg-white
+rounded-[28px]
+p-4
+shadow-sm
+border
+border-slate-100
+hover:shadow-md
+transition
+">
+            <div className="relative">
 
-              <div className="absolute right-2 top-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // ✅ FIXED MENU BUG
-                    setMenuOpen(menuOpen === p.id ? null : p.id);
-                  }}
-                >
-                  <MoreVertical size={18} className="text-gray-500" />
-                </button>
+              
 
-                {menuOpen === p.id && (
-                  <div className="absolute right-0 mt-2 bg-white shadow-xl rounded-xl w-28 z-50">
-                    <button
-                      onClick={() => {
-                        setEditingPlan(p);
-                        setName(p.name);
-                        setPrice(String(p.price));
-                        setImage(p.image);
-                        setShowModal(true);
-                      }}
-                      className="block w-full px-3 py-2 text-xs hover:bg-gray-100"
-                    >
-                      Edit
-                    </button>
+              <div className="flex items-center gap-3">
 
-                    <button
-                      onClick={() => deletePlan(p)}
-                      className="block w-full px-3 py-2 text-xs text-red-500 hover:bg-gray-100"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
+  {p.image && (
+    <img
+      src={p.image}
+      onClick={() => setPreviewImage(p.image)}
+      className="
+      w-12 h-12
+      rounded-2xl
+      object-cover
+      cursor-pointer
+      border
+      border-gray-200
+      "
+    />
+  )}
 
-              {p.image && (
-                <img
-                  src={p.image}
-                  onClick={() => setPreviewImage(p.image)}
-                  className="w-12 h-12 rounded-2xl object-cover mb-3 cursor-pointer border border-gray-200"
-                />
-              )}
+  <div className="flex-1">
 
-              <h2 className="font-semibold text-sm md:text-base text-gray-900 leading-snug">
-  {p.name}
-</h2>
+    <h2 className="font-bold text-[10px] text-gray-900">
+      {p.name}
+    </h2>
 
-<p className="text-xs text-gray-500 mt-1">
-  Subscription plan
-</p>
+    <p className="text-sm text-gray-500">
+      Subscription plan
+    </p>
 
-<p className="text-indigo-600 font-bold text-xs md:text-base">
-  ₹{p.price}
-</p>
+    <p className="text-indigo-600 font-bold mt-1">
+      ₹{p.price}
+    </p>
+
+  </div>
+
+  <div className="flex flex-col items-end gap-2">
+    <div className="relative">
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      setMenuOpen(menuOpen === p.id ? null : p.id);
+    }}
+  >
+    <MoreVertical
+      size={18}
+      className="text-gray-900"
+    />
+  </button>
+
+  {menuOpen === p.id && (
+  <div
+  className="
+  absolute
+  right-0
+  top-8
+  w-36
+  bg-white/95
+  backdrop-blur-md
+  rounded-2xl
+  shadow-[0_10px_40px_rgba(0,0,0,0.12)]
+  border
+  border-gray-100
+  overflow-hidden
+  z-50
+  "
+>
+
+    <button
+      onClick={() => {
+        setEditingPlan(p);
+        setName(p.name);
+        setPrice(String(p.price));
+        setImage(p.image);
+        setShowModal(true);
+      }}
+      className="block w-full px-3 py-2 text-sm hover:bg-gray-100"
+    >
+      Edit
+    </button>
+
+    <button
+      onClick={() => deletePlan(p)}
+      className="block w-full px-3 py-2 text-sm text-red-500 hover:bg-gray-100"
+    >
+      Delete
+    </button>
+
+  </div>
+)}
+</div>
+    
+  </div>
+  </div>
+
+</div>
             </div>
-          </div>
+          
         ))}
       </div>
 
@@ -362,7 +457,7 @@ export default function PlansPage() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-[350px] bg-white rounded-3xl shadow-2xl"
+            className="w-[350px] bg-white rounded-[28px] shadow-2xl"
           >
             <div className="p-6">
 

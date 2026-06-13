@@ -177,7 +177,7 @@ setWifiPlans(wifiData || []);
       type="text"
       placeholder="Search anything..."
       className="
-      w-[100px]
+      w-[110px]
       h-10
       bg-white
       rounded-xl

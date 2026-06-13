@@ -2,6 +2,32 @@
 
 import { useEffect, useState } from "react";
 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
+
+import {
+  Download,
+  Wallet,
+  Users,
+  TrendingUp,
+} from "lucide-react";
+
+const chartData = [
+  { day: "Jun 1", revenue: 40 },
+  { day: "Jun 2", revenue: 70 },
+  { day: "Jun 3", revenue: 150 },
+  { day: "Jun 4", revenue: 200 },
+  { day: "Jun 5", revenue: 320 },
+  { day: "Jun 6", revenue: 900 },
+  { day: "Jun 7", revenue: 320 },
+];
+
 // TYPES
 type Customer = {
   id: number;
@@ -37,138 +63,230 @@ export default function RevenuePage() {
     return total + (plan?.price || 0);
   }, 0);
 
+  const chartData = plans.map((plan) => {
+  const users = customers.filter(
+    (c) => c.planId === plan.id
+  );
+  return {
+    day: `Plan ${plan.id}`,
+    revenue: users.length * plan.price,
+  };
+
+});
+
   // PLAN REVENUE
-  const planRevenue = plans.map((p) => {
-    const users = customers.filter((c) => c.planId === p.id);
-    return {
-      name: p.name,
-      total: users.length * p.price,
-      users: users.length,
-    };
-  });
+  
 
   return (
-    <div className="p-6 min-h-screen text-black">
+  <div className="p-4 md:p-8 min-h-screen bg-[#F7F8FC]">
 
-      {/* HEADER */}
-      <h1 className="text-3xl font-bold mb-6">
+    {/* HEADER */}
+    <div className="flex justify-between items-center mb-6">
+
+      <h1 className="text-l font-bold">
         Revenue Dashboard
       </h1>
 
-      {/* 🔥 TOP CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="flex gap-3">
 
-        <div className="p-6 rounded-2xl text-white shadow-xl bg-gradient-to-r from-blue-500 to-indigo-600">
-          <p className="opacity-80 text-sm">Total Revenue</p>
-          <h2 className="text-3xl font-bold">₹{totalRevenue}</h2>
-        </div>
+        <select className="bg-white border border-slate-200 rounded-xl px-2 py-1">
+          <option>This Month</option>
+        </select>
 
-        <div className="p-6 rounded-2xl text-white shadow-xl bg-gradient-to-r from-purple-500 to-pink-500">
-          <p className="opacity-80 text-sm">Total Customers</p>
-          <h2 className="text-3xl font-bold">{customers.length}</h2>
-        </div>
+       
 
-        <div className="p-6 rounded-2xl text-white shadow-xl bg-gradient-to-r from-green-500 to-emerald-600">
-          <p className="opacity-80 text-sm">Avg Revenue / User</p>
-          <h2 className="text-3xl font-bold">
-            ₹{customers.length ? Math.floor(totalRevenue / customers.length) : 0}
+      </div>
+    </div>
+
+    {/* TOP CARDS */}
+
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+
+      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl p-4 flex justify-between items-center">
+
+        <div>
+          <p className="text-xs opacity-90">
+  Total Revenue
+</p>
+          <h2 className="text-2xl font-bold">
+            ₹{totalRevenue}
           </h2>
         </div>
 
+        <Wallet size={24}/>
       </div>
 
-      {/* 🔥 CUSTOMER CARDS */}
-      <div className="bg-white/40 backdrop-blur-xl border border-white/30 p-5 rounded-2xl shadow-lg mb-6">
-        <h2 className="font-semibold mb-4 text-lg">
-          Customer Revenue
-        </h2>
+      <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl p-3 flex justify-between items-center">
 
-        <div className="grid md:grid-cols-2 gap-4">
-          {customers.map((c) => {
-            const plan = plans.find((p) => p.id === c.planId);
-
-            return (
-              <div
-                key={c.id}
-                className="p-4 rounded-xl border border-white/40 
-                bg-white/60 backdrop-blur-md 
-                hover:bg-white/80 hover:shadow-lg hover:scale-[1.01] 
-                transition duration-300 flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-semibold">{c.name}</p>
-                  <p className="text-xs text-gray-700">
-                    {plan?.name}
-                  </p>
-                </div>
-
-                <span className="font-bold text-indigo-600">
-                  ₹{plan?.price || 0}
-                </span>
-              </div>
-            );
-          })}
+        <div>
+          <p>Total Customers</p>
+          <h2 className="text-xl font-bold">
+            {customers.length}
+          </h2>
         </div>
+
+        <Users size={24}/>
       </div>
 
-      {/* 🔥 PLAN PERFORMANCE */}
-      <div className="bg-white/40 backdrop-blur-xl border border-white/30 p-5 rounded-2xl shadow-lg">
-        <h2 className="font-semibold mb-4 text-lg">
-          Plan Performance
-        </h2>
+      <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl p-4 flex justify-between items-center">
 
-        <div className="space-y-4">
-          {planRevenue.map((p, i) => {
-            const percent =
-              totalRevenue === 0
-                ? 0
-                : (p.total / totalRevenue) * 100;
-
-            const isTop = percent > 40;
-
-            return (
-              <div
-                key={i}
-                className={`p-[1.5px] rounded-xl transition ${
-                  isTop
-                    ? "bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500 shadow-lg"
-                    : "bg-white/30"
-                }`}
-              >
-                <div className="p-4 rounded-xl bg-white/70 backdrop-blur-md hover:bg-white/90 transition">
-
-                  {/* TOP ROW */}
-                  <div className="flex justify-between items-center mb-2">
-                    <div>
-                      <p className="font-semibold text-gray-900">
-                        {p.name}
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {p.users} users
-                      </p>
-                    </div>
-
-                    <span className="font-bold text-indigo-600">
-                      ₹{p.total}
-                    </span>
-                  </div>
-
-                  {/* PROGRESS */}
-                  <div className="w-full bg-white/40 rounded-full h-3 overflow-hidden">
-                    <div
-                      className="h-3 rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-pink-500 
-                      shadow-[0_0_10px_rgba(139,92,246,0.6)] transition-all duration-700"
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-
-                </div>
-              </div>
-            );
-          })}
+        <div>
+          <p>Avg Revenue / User</p>
+          <h2 className="text-xl font-bold">
+            ₹{
+              customers.length
+                ? Math.floor(totalRevenue / customers.length)
+                : 0
+            }
+          </h2>
         </div>
+
+        <TrendingUp size={24}/>
       </div>
 
     </div>
-  );
+
+    {/* REVENUE CHART */}
+
+    <div className="bg-white rounded-3xl p-3 shadow-sm mb-6">
+
+      <h2 className="font-semibold text-xl mb-6">
+        Revenue Overview
+      </h2>
+
+      <div className="h-[350px]">
+
+        <ResponsiveContainer width="100%" height="100%">
+
+          <BarChart data={chartData}>
+
+            <XAxis dataKey="day"/>
+
+            <YAxis/>
+
+            <Tooltip/>
+
+            <Bar
+              dataKey="revenue"
+              fill="#7C3AED"
+              radius={[8,8,0,0]}
+            />
+
+          </BarChart>
+
+        </ResponsiveContainer>
+
+      </div>
+
+    </div>
+
+    {/* TOP CUSTOMERS */}
+
+    <div className="bg-white rounded-3xl p-3 shadow-sm">
+
+      <div className="flex justify-between items-center mb-5">
+
+  <h2 className="font-semibold text-xl">
+    Top Customers
+  </h2>
+
+  <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold">
+    {customers.length} Users
+  </span>
+
+</div>
+
+<div className="space-y-4">
+
+{[...customers]
+  .sort((a, b) => {
+    const planA = plans.find((p) => p.id === a.planId);
+    const planB = plans.find((p) => p.id === b.planId);
+
+    return (planB?.price || 0) - (planA?.price || 0);
+  })
+  .map((c, index) => {
+
+    const plan = plans.find(
+      (p) => p.id === c.planId
+    );
+
+    return (
+
+<div
+  key={c.id}
+  className="
+bg-gradient-to-r
+from-white
+to-slate-50
+border
+border-slate-200
+rounded-2xl
+p-4
+flex
+justify-between
+items-center
+shadow-sm
+hover:shadow-xl
+transition-all
+duration-300
+w-full
+"
+>
+
+        <div className="flex items-center gap-3">
+
+          <div
+            className="
+            w-8
+            h-8
+            rounded-full
+            bg-purple-100
+            text-purple-600
+            flex
+            items-center
+            justify-center
+            font-bold
+            "
+          >
+            {index + 1}
+          </div>
+
+          <div>
+            <p className="font-semibold text-slate-900">
+              {c.name}
+            </p>
+
+            <p className="text-xs text-slate-500">
+              {plan?.name}
+            </p>
+          </div>
+
+        </div>
+
+        <div
+          className="
+          px-3
+          py-1
+          rounded-full
+          bg-purple-100
+          text-purple-700
+          font-bold
+          "
+        >
+          ₹{plan?.price || 0}
+        </div>
+
+      </div>
+
+    );
+})}
+
+</div>
+
+
+    </div>
+
+  </div>
+);
 }

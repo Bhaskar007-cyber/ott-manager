@@ -1,27 +1,11 @@
 "use client";
-
+import { CartesianGrid,} from "recharts";
 import { useEffect, useState } from "react";
-import {
-  Area,
-  AreaChart,
-} from "recharts";
-import {
-  TrendingUp,
-  Users,
-  CheckCircle,
-  Clock3,
-  Wifi,
-} from "lucide-react";
+import {Area,AreaChart,} from "recharts";
+import {TrendingUp,Users,CheckCircle,Clock3,Wifi,} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import {LineChart,  Line,XAxis,YAxis,Tooltip,ResponsiveContainer,} from "recharts";
 
 
 type Customer = {
@@ -178,28 +162,77 @@ setWifiPlans(wifiData || []);
   if (loading) return <div className="p-4">Loading...</div>;
     console.log(plans);
   return (
-    <div className="min-h-screen bg-[#F6F7FB] p-4 md:p-6">
+    
+    <div className="min-h-screen bg-[#F6F7FB] p-4 md:p-6 mt-2">
 
-      <div className="flex items-center justify-between mb-6">
-  <h1 className="text-2xl md:text-3xl font-bold">
-    Dashboard
-  </h1>
+      <div className="mb-6">
+  <div className="flex items-center justify-between">
+  <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
+  Dashboard
+</h1>
 
-  <div className="hidden md:flex items-center gap-3">
+<div className="flex items-center gap-3">
+  <div className="relative">
     <input
       type="text"
       placeholder="Search anything..."
-      className="px-4 py-2 border rounded-xl w-72"
+      className="
+      w-[150px]
+      h-12
+      bg-white
+      rounded-2xl
+      border
+      border-slate-200
+      shadow-sm
+      pl-11
+      pr-4
+      text-sm
+      outline-none
+      "
     />
 
-    <button className="w-10 h-10 rounded-xl border flex items-center justify-center">
-      🔔
-    </button>
+    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+      🔍
+    </span>
   </div>
+
+  <button
+    className="
+    relative
+    w-12
+    h-12
+    bg-white
+    rounded-2xl
+    border
+    border-slate-200
+    shadow-sm
+    flex
+    items-center
+    justify-center
+    "
+  >
+    <span className="text-lg text-slate-500">
+      🔔
+    </span>
+
+    <span
+      className="
+      absolute
+      top-2
+      right-2
+      w-3
+      h-3
+      rounded-full
+      bg-purple-500
+      "
+    />
+  </button>
+</div>
+</div>
 </div>
 
       {/* CARDS */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 mb-5">
 
 <Card
   title="Revenue"
@@ -233,20 +266,21 @@ setWifiPlans(wifiData || []);
   link="/customers?status=expired"
 />
 
+<div className="col-span-2 xl:col-span-1">
 <Card
-  title="WiFi Plans"
-  value={wifiPlans.length}
-  icon={<Wifi size={34} />}
-  iconColor="text-blue-500"
-  link="/wifi"
+ title="WiFi Plans"
+ value={wifiPlans.length}
+ icon={<Wifi size={34} />}
+ iconColor="text-blue-500"
+ link="/wifi"
 />
-
+</div>
 </div>
 
       
 
 {/* ANALYTICS + EXPIRING */}
-<div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-6 mb-6">
+<div className="grid grid-cols-1 lg:grid-cols-[4fr_1.2fr] gap-6 mb-6">
 
   {/* REVENUE CHART */}
  <div
@@ -271,7 +305,9 @@ setWifiPlans(wifiData || []);
       </select>
     </div>
 
-    <ResponsiveContainer width="100%" height={220}>
+    <div className="h-[240px] md:h-[340px]">
+  <ResponsiveContainer width="100%" height="100%">
+
   <AreaChart data={chartData}>
     <defs>
       <linearGradient
@@ -294,8 +330,21 @@ setWifiPlans(wifiData || []);
       </linearGradient>
     </defs>
 
-    <XAxis tick={false} />
-    <YAxis hide />
+    <XAxis
+  dataKey="name"
+  tickLine={false}
+  axisLine={false}
+/>
+
+<YAxis
+  tickLine={false}
+  axisLine={false}
+/>
+
+<CartesianGrid
+  strokeDasharray="3 3"
+  vertical={false}
+/>
 
     <Tooltip />
 
@@ -308,6 +357,7 @@ setWifiPlans(wifiData || []);
     />
   </AreaChart>
 </ResponsiveContainer>
+  </div>
   </div>
 
   {/* EXPIRING SOON */}
@@ -383,41 +433,50 @@ setWifiPlans(wifiData || []);
     </Link>
   </div>
 
-  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+<div
+  className="
+  flex
+  md:grid
+  md:grid-cols-4
+  md:gap-5
+  gap-3
+  overflow-x-auto
+  md:overflow-visible
+  pb-2
+  scrollbar-hide
+  "
+>
     {plans.slice(0, 5).map((p) => (
 <div
   key={p.id}
   className="
-  bg-white
-  border
-  border-slate-100
-  rounded-2xl
-  p-3
-  shadow-sm
-  transition-all
-  duration-300
-  hover:shadow-[0_8px_25px_rgba(0,0,0,0.18)]
-  hover:-translate-y-1
-  cursor-pointer
-  "
+w-[160px]
+md:w-full
+min-h-[110px]
+flex-shrink-0
+bg-white
+rounded-xl
+border
+border-slate-100
+p-1
+shadow-sm
+"
 >
-    
- <Image
-  src={p.image}
-  alt={p.name}
-  width={40}
-  height={40}
-  className="rounded-xl mb-3"
-/>
+  <Image
+    src={p.image}
+    alt={p.name}
+    width={40}
+    height={32}
+    className="mb-2"
+  />
 
+  <div className="text-[13px] font-semibold truncate">
+    {p.name}
+  </div>
 
-    <div className="font-semibold text-[15px] text-gray-900 line-clamp-2 mb-2">
-  {p.name}
-</div>
-
-    <div className="text-indigo-600 font-bold text-lg">
-      ₹{p.price}
-    </div>
+  <div className="text-indigo-600 font-bold mt-1">
+    ₹{p.price}
+  </div>
 
     <div className="text-xs text-gray-400 mt-1">
       Subscription Plan

@@ -28,15 +28,34 @@ export default function SidebarLayout({
       <div className="w-full md:hidden">
 
         {/* 🔥 HEADER */}
-        <div className="bg-white/60 backdrop-blur-xl border-b px-4 py-3 flex items-center justify-center shadow-sm sticky top-0 z-40">
-          <h1 className="font-semibold text-lg tracking-tight">
-            OTT Manager
-          </h1>
-        </div>
+        <div
+  className="
+  bg-[#F8F8FC]
+  h-[40px]
+  flex
+  items-center
+  justify-center
+  border-b
+  border-slate-200
+  "
+>
+  <h1 className="text-2xl font-bold text-slate-900">
+    OTT Manager
+  </h1>
+</div>
 
         {/* 🔥 TOP NAV */}
-        <div className="bg-white/50 backdrop-blur-xl border-b px-2 py-2 sticky top-[56px] z-30">
-          <div className="flex gap-2 bg-white/40 p-1 rounded-xl shadow-inner">
+        <div
+  className="
+  bg-white
+  px-3
+  py-2.5
+  border-b
+  border-slate-200
+  shadow-sm
+  "
+>
+          <div className="flex gap-3">
             {menu.map((item) => {
               const isActive = pathname === item.path;
 
@@ -44,14 +63,17 @@ export default function SidebarLayout({
                 <Link
                   key={item.name}
                   href={item.path}
-                  className={`flex-1 text-center py-2 text-sm font-medium rounded-lg transition-all duration-300
-                  ${
-                    isActive
-                      ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md scale-[1.03]"
-                      : "text-gray-700 hover:bg-white/60"
-                  }`}
+                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-2xl font-semibold transition-all
+${
+  isActive
+    ? "bg-[#E8EEFF] text-[#2563EB]"
+    : "text-slate-500"
+}`}
                 >
-                  {item.name}
+                  <>
+  <item.icon size={18} />
+  <span>{item.name}</span>
+</>
                 </Link>
               );
             })}
@@ -59,7 +81,7 @@ export default function SidebarLayout({
         </div>
 
         {/* 🔥 MOBILE CONTENT */}
-        <main className="p-4">
+        <main className="px-1">
           {children}
         </main>
       </div>

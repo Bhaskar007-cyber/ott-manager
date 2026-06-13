@@ -177,10 +177,10 @@ setWifiPlans(wifiData || []);
       type="text"
       placeholder="Search anything..."
       className="
-      w-[150px]
-      h-12
+      w-[100px]
+      h-10
       bg-white
-      rounded-2xl
+      rounded-xl
       border
       border-slate-200
       shadow-sm
@@ -199,8 +199,8 @@ setWifiPlans(wifiData || []);
   <button
     className="
     relative
-    w-12
-    h-12
+    w-10
+    h-10
     bg-white
     rounded-2xl
     border
@@ -220,8 +220,8 @@ setWifiPlans(wifiData || []);
       absolute
       top-2
       right-2
-      w-3
-      h-3
+      w-2
+      h-2
       rounded-full
       bg-purple-500
       "

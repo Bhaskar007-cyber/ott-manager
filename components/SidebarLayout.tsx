@@ -55,7 +55,7 @@ export default function SidebarLayout({
   shadow-sm
   "
 >
-          <div className="flex gap-3">
+          <div className="grid grid-cols-3 gap-2">
             {menu.map((item) => {
               const isActive = pathname === item.path;
 
@@ -63,11 +63,11 @@ export default function SidebarLayout({
                 <Link
                   key={item.name}
                   href={item.path}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-2xl font-semibold transition-all
+                  className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-xl font-semibold transition-all
 ${
   isActive
-    ? "bg-[#E8EEFF] text-[#2563EB]"
-    : "text-slate-500"
+    ? "bg-[#E8EEFF] px-1 text-[#2563EB]"
+    : "text-slate-600"
 }`}
                 >
                   <>

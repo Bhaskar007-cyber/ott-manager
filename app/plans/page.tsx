@@ -346,9 +346,9 @@ transition
       Subscription plan
     </p>
 
-    <p className="text-indigo-600 font-bold mt-1">
-      ₹{p.price}
-    </p>
+    <p className="text-indigo-600 text-[11px] font-semibold mt-1">
+  ₹{p.price}
+</p>
 
   </div>
 
@@ -451,54 +451,155 @@ transition
 
       {/* MODAL */}
       {showModal && (
-        <div
-          onClick={resetForm}
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+  <div
+    onClick={resetForm}
+    className="
+    fixed inset-0
+    bg-black/40
+    backdrop-blur-sm
+    flex items-center justify-center
+    z-50
+    px-4
+    "
+  >
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="
+      w-full
+      max-w-md
+      bg-white
+      rounded-3xl
+      shadow-2xl
+      overflow-hidden
+      "
+    >
+      
+{/* Header */}
+<div className="flex items-center justify-between px-6 pt-5 pb-2">
+  <div>
+    <h2 className="text-2xl font-bold text-gray-900">
+      {editingPlan ? "Edit Plan" : "Add Plan"}
+    </h2>
+  </div>
+
+  <button
+    onClick={resetForm}
+    className="
+    w-9 h-9
+    rounded-full
+    bg-gray-100
+    hover:bg-gray-200
+    transition
+    flex items-center justify-center
+    text-gray-500
+    "
+  >
+    ✕
+  </button>
+</div>
+
+      {/* Body */}
+      <div className="p-6">
+
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Plan Name
+        </label>
+
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Enter plan name"
+          className="w-full h-12 px-4 border border-gray-200 rounded-xl mb-4"
+        />
+
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Price (₹)
+        </label>
+
+        <input
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          placeholder="Enter price"
+          className="w-full h-12 px-4 border border-gray-200 rounded-xl mb-4"
+        />
+
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Plan Image
+        </label>
+
+        <label
+          className="
+          flex items-center gap-4
+          border-2 border-dashed border-gray-300
+          rounded-2xl
+          p-5
+          cursor-pointer
+          hover:bg-gray-50
+          "
         >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="w-[350px] bg-white rounded-[28px] shadow-2xl"
-          >
-            <div className="p-6">
+          <input
+            type="file"
+            onChange={handleImage}
+            className="hidden"
+          />
 
-              <input
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full p-3 border rounded-xl mb-3"
-              />
+          <div className="text-2xl">📤</div>
 
-              <input
-                placeholder="Price"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                className="w-full p-3 border rounded-xl mb-3"
-              />
+          <div>
+            <p className="font-medium text-sm">
+              Upload Image
+            </p>
 
-              <label className="block bg-purple-600 text-white text-center py-2 rounded-xl cursor-pointer">
-                Upload Image
-                <input type="file" onChange={handleImage} className="hidden" />
-              </label>
-
-              {uploading && (
-                <p className="text-xs text-center mt-2">Uploading...</p>
-              )}
-
-              {image && (
-                <img src={image} className="w-20 h-20 mx-auto mt-3 rounded-xl" />
-              )}
-
-              <button
-                onClick={savePlan}
-                className="mt-4 w-full bg-purple-600 text-white py-2 rounded-xl"
-              >
-                Save
-              </button>
-
-            </div>
+            <p className="text-xs text-gray-500">
+              PNG, JPG up to 2MB
+            </p>
           </div>
+        </label>
+
+        {image && (
+          <img
+            src={image}
+            className="w-24 h-24 object-cover rounded-xl mt-4"
+          />
+        )}
+
+        {/* Buttons */}
+        <div className="flex gap-3 mt-6">
+
+          <button
+            onClick={resetForm}
+            className="
+            flex-1
+            h-11
+            rounded-xl
+            border
+            border-gray-300
+            "
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={savePlan}
+            className="
+            flex-1
+            h-11
+            rounded-xl
+            bg-gradient-to-r
+            from-purple-600
+            to-indigo-600
+            text-white
+            font-medium
+            "
+          >
+            Save Plan
+          </button>
+
         </div>
-      )}
+      </div>
+    </div>
+  </div>
+)}
 
       {/* IMAGE PREVIEW */}
 {previewImage && (

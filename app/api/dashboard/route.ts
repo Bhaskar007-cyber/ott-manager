@@ -17,9 +17,13 @@ export async function GET() {
 
     return NextResponse.json({ customers, plans });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to load dashboard" },
-      { status: 500 }
-    );
-  }
+  console.error("Dashboard API Error:", error);
+
+  return NextResponse.json(
+    {
+      error: String(error)
+    },
+    { status: 500 }
+  );
+}
 }

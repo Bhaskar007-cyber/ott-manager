@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import {
+  Pencil,
+  RefreshCcw,
+  Trash2,
+} from "lucide-react";
 
 type Customer = {
   id: number;
@@ -190,7 +195,17 @@ const matchesSearch =
   if (loading) return <div className="p-6">Loading...</div>;
 
   return (
-    <div className="min-h-screen p-3 md:p-6 bg-[#f5f7fb]">
+  <div
+ className="
+min-h-screen
+relative
+overflow-hidden
+p-3
+md:p-6
+bg-[#f3f1fb]
+"
+>
+ 
       <div className="max-w-5xl mx-auto">
 
         {/* HEADER */}
@@ -203,20 +218,53 @@ const matchesSearch =
         </div>
 
        {/* ✅ PUT SEARCH HERE */}
-<div className="flex items-center gap-2 mb-4">
-  <input
-    placeholder="Search customer..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-    className="flex-[0.7] min-w-0 p-3 rounded-xl border"
-  />
+<div className="flex items-center gap-3 mb-6">
+
+  <div className="relative flex-1">
+    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+      🔍
+    </span>
+
+    <input
+      placeholder="Search customers..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="
+      w-full
+      h-14
+      pl-11
+      pr-4
+      rounded-full
+      bg-white/35
+backdrop-blur-2xl
+border-white/60
+shadow-[0_8px_25px_rgba(180,180,220,.12)]
+      backdrop-blur-xl
+      border
+      border-white/70
+      outline-none
+      shadow-sm
+      "
+    />
+  </div>
 
   <button
     onClick={() => setShowModal(true)}
-    className="flex-shrink-0 whitespace-nowrap bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-3 py-2 rounded-xl shadow-md"
+    className="
+    h-14
+    px-7
+    rounded-full
+    bg-gradient-to-r
+    from-violet-500
+    to-indigo-500
+    text-white
+    font-medium
+    shadow-[0_15px_40px_rgba(139,92,246,.55)]
+    "
   >
     + Add Customer
   </button>
+
 </div>
 
         {/* LIST */}
@@ -225,83 +273,213 @@ const matchesSearch =
             const expired = new Date(c.expiryDate) < new Date();
 
             return (
-              <div
+<div
   key={c.id}
-  className="bg-white rounded-xl p-4 shadow-md border border-gray-100 transition-all active:scale-[0.98]"
+className="
+relative
+overflow-hidden
+bg-white/20
+backdrop-blur-[40px]
+rounded-[28px]
+p-4
+border
+border-white/60
+shadow-[0_20px_60px_rgba(31,38,135,0.15)]
+"
 >
+  <div
+  className="
+  absolute
+  top-0
+  left-0
+  w-full
+  h-20
+  bg-gradient-to-b
+  from-white/70
+  to-transparent
+  pointer-events-none
+  "
+/>
+
+{/* PURPLE GLOW */}
+<div
+  className="
+  absolute
+  -left-10
+  top-0
+  w-32
+  h-32
+  bg-violet-300/20
+  blur-3xl
+  rounded-full
+  "
+/>
+
+{/* GLASS OVERLAY */}
+<div
+  className="
+  absolute
+  inset-0
+  rounded-[35px]
+  bg-gradient-to-br
+  from-white/70
+  via-white/20
+  to-white/5
+  pointer-events-none
+  "
+/>
   {/* TOP */}
-  <div className="flex justify-between items-start gap-3">
+  <div className="relative z-10 flex justify-between items-start">
 
-    {/* LEFT INFO */}
-    <div className="flex-1 min-w-0">
+  <div className="flex items-start gap-4 flex-1">
 
-      <h2 className="text-sm font-semibold text-gray-800 leading-tight break-words">
-        {c.name}
-      </h2>
-
-      <p className="text-xs text-gray-500 mt-1">
-        {c.phone}
-      </p>
-
-      <p className="text-xs text-indigo-600 mt-1">
-        OTT: {c.ottNumber || "-"}
-      </p>
-
-      <p className="text-[11px] text-gray-400 mt-1">
-        Exp: {new Date(c.expiryDate).toLocaleDateString()}
-      </p>
+    {/* Avatar */}
+    <div
+      className="
+      w-12
+      h-12
+      rounded-full
+      bg-gradient-to-br
+      from-white
+      to-violet-50
+      shadow-[0_0_40px_rgba(139,92,246,.35)]
+      flex
+      items-center
+      justify-center
+      text-violet-500
+      font-semibold
+      text-lg
+      shrink-0
+      "
+    >
+      {c.name
+        .split(" ")
+        .slice(0, 2)
+        .map((n) => n[0])
+        .join("")}
     </div>
 
-    <div className="flex flex-col items-end gap-2 shrink-0">
+    {/* Text */}
+    <div className="flex flex-col min-w-0">
 
-  {/* STATUS */}
-  <span
-    className={`text-[10px] px-2 py-1 rounded-full font-medium ${
-      expired
-        ? "bg-red-100 text-red-600"
-        : "bg-green-100 text-green-600"
-    }`}
-  >
-    {expired ? "Expired" : "Active"}
-  </span>
+  <h2 className="text-lg font-semibold text-slate-900">
+    {c.name}
+  </h2>
 
-  {/* PLAN IMAGE */}
-  {c.plan?.image && (
-    <img
-  src={c.plan.image}
-  alt="plan"
-  onClick={() => setPreviewImage(c.plan?.image || null)}
-  className="w-12 h-12 rounded-xl object-cover border border-gray-200 shadow-sm cursor-pointer hover:scale-105 transition"
-/>
-  )}
+  <p className="text-sm text-slate-500">
+    {c.phone}
+  </p>
+
+  <p className="text-sm text-violet-600 font-medium">
+    OTT: {c.ottNumber || "-"}
+  </p>
+
+  <p className="text-xs text-slate-400">
+    Exp: {new Date(c.expiryDate).toLocaleDateString()}
+  </p>
 
 </div>
+
   </div>
 
+  {/* Right Side */}
+  <div className="flex flex-col items-end gap-3">
+
+    <span
+      className={`px-4 py-1 rounded-full text-sm font-medium ${
+        expired
+          ? "bg-red-100/60 text-red-500 backdrop-blur-xl"
+          : "bg-green-100/60 text-green-500 backdrop-blur-xl"
+      }`}
+    >
+      {expired ? "Expired" : "Active"}
+    </span>
+
+    {c.plan?.image && (
+      <img
+        src={c.plan.image}
+        alt="plan"
+        onClick={() => setPreviewImage(c.plan?.image || null)}
+        className="
+        w-14
+        h-14
+        rounded-2xl
+        object-cover
+        cursor-pointer
+        "
+      />
+    )}
+
+  </div>
+
+</div>
   {/* BUTTONS */}
-  <div className="flex gap-2 mt-4">
+  <div className="relative z-10 flex gap-3 mt-2">
 
     <button
-      onClick={() => editCustomer(c)}
-      className="flex-1 py-2 text-xs rounded-lg bg-[#2563eb] text-white font-medium"
-    >
-      Edit
-    </button>
+  onClick={() => editCustomer(c)}
+  className="
+  flex-1
+  h-12
+  rounded-full
+  bg-white/40
+  backdrop-blur-xl
+  border
+  border-white/60
+  flex
+  items-center
+  justify-center
+  gap-2
+  text-indigo-500
+  font-medium
+  "
+>
+  <Pencil size={16} />
+  Edit
+</button>
+    <button
+  onClick={() => renewCustomer(c.id)}
+  className="
+  flex-1
+  h-12
+  rounded-full
+  bg-white/40
+  backdrop-blur-xl
+  border
+  border-white/60
+  flex
+  items-center
+  justify-center
+  gap-2
+  text-violet-600
+  font-medium
+  "
+>
+  <RefreshCcw size={16} />
+  Renew
+</button>
 
     <button
-      onClick={() => renewCustomer(c.id)}
-      className="flex-1 py-2 text-xs rounded-lg bg-[#7c3aed] text-white font-medium"
-    >
-      Renew
-    </button>
-
-    <button
-      onClick={() => setDeleteId(c.id)}
-      className="flex-1 py-2 text-xs rounded-lg bg-[#dc2626] text-white font-medium"
-    >
-      Delete
-    </button>
-
+  onClick={() => setDeleteId(c.id)}
+  className="
+  flex-1
+  h-12
+  rounded-full
+  bg-white/40
+  backdrop-blur-xl
+  border
+  border-white/60
+  flex
+  items-center
+  justify-center
+  gap-2
+  text-red-500
+  font-medium
+  "
+>
+  <Trash2 size={16} />
+  Delete
+</button>
   </div>
 </div>
             );

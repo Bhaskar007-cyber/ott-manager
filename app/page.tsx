@@ -6,7 +6,7 @@ import {TrendingUp,Users,CheckCircle,Clock3,Wifi,} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import {LineChart,  Line,XAxis,YAxis,Tooltip,ResponsiveContainer,} from "recharts";
-
+import { Search, Bell } from "lucide-react";
 
 type Customer = {
   id: number;
@@ -48,18 +48,20 @@ function Card({
 }: CardProps) {
   return (
     <Link href={link}>
-      <div
-        className="
-        bg-white/95
-        border
-        border-slate-100
-       rounded-2xl
-shadow-sm
-p-4
-        hover:shadow-lg
-        transition
-        "
-      >
+     <div
+  className="
+  bg-white/35
+  backdrop-blur-2xl
+  border
+  border-white/60
+  rounded-2xl
+  shadow-[0_8px_32px_rgba(31,38,135,0.12)]
+  p-4
+  hover:scale-[1.02]
+  transition-all
+  duration-300
+"
+>
         <div className="flex justify-between items-start">
           <div>
             <p className="text-sm text-gray-500">
@@ -160,10 +162,28 @@ setWifiPlans(wifiData || []);
   });
 
   if (loading) return <div className="p-4">Loading...</div>;
-    console.log(plans);
+    
   return (
     
-    <div className="min-h-screen bg-[#F6F7FB] p-4 md:p-6 mt-2">
+<div className="
+relative
+overflow-hidden
+min-h-screen
+bg-gradient-to-br
+from-[#EEF4FF]
+via-[#F7F0FF]
+to-[#FFF5FB]
+px-5
+pt-2
+pb-6
+">
+  <div className="absolute top-0 left-0 w-56 h-56 bg-purple-400/20 blur-[120px] rounded-full" />
+
+<div className="absolute top-96 right-0 w-56 h-56 bg-pink-400/20 blur-[120px] rounded-full" />
+
+<div className="absolute bottom-20 left-10 w-56 h-56 bg-blue-400/20 blur-[120px] rounded-full" />
+
+<div className="relative z-10">
 
       <div className="mb-6">
   <div className="flex items-center justify-between">
@@ -177,18 +197,19 @@ setWifiPlans(wifiData || []);
       type="text"
       placeholder="Search anything..."
       className="
-      w-[110px]
-      h-10
-      bg-white
-      rounded-xl
-      border
-      border-slate-200
-      shadow-sm
-      pl-11
-      pr-4
-      text-sm
-      outline-none
-      "
+w-[120px]
+h-11
+bg-white/40
+backdrop-blur-xl
+border
+border-white/60
+rounded-2xl
+shadow-[0_8px_24px_rgba(31,38,135,0.10)]
+pl-11
+pr-4
+text-sm
+outline-none
+"
     />
 
     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
@@ -197,19 +218,20 @@ setWifiPlans(wifiData || []);
   </div>
 
   <button
-    className="
-    relative
-    w-10
-    h-10
-    bg-white
-    rounded-2xl
-    border
-    border-slate-200
-    shadow-sm
-    flex
-    items-center
-    justify-center
-    "
+   className="
+relative
+w-11
+h-11
+bg-white/40
+backdrop-blur-xl
+border
+border-white/60
+rounded-2xl
+shadow-[0_8px_24px_rgba(31,38,135,0.10)]
+flex
+items-center
+justify-center
+"
   >
     <span className="text-lg text-slate-500">
       🔔
@@ -285,22 +307,32 @@ setWifiPlans(wifiData || []);
   {/* REVENUE CHART */}
  <div
   className="
-  bg-white
-  border
-  border-slate-100
-  rounded-2xl
-  shadow-sm
-  p-3 md:p-4
-  hover:shadow-md
-  transition
-  "
+bg-white/40
+backdrop-blur-xl
+border
+border-white/60
+rounded-2xl
+shadow-[0_8px_32px_rgba(31,38,135,0.12)]
+p-4
+"
 >
     <div className="flex justify-between mb-4">
       <h2 className="font-semibold">
         Revenue Analytics
       </h2>
 
-      <select className="border rounded-lg px-3 py-1">
+      <select
+className="
+bg-white/40
+backdrop-blur-xl
+border
+border-white/60
+rounded-xl
+px-3
+py-2
+shadow-[0_4px_12px_rgba(31,38,135,0.08)]
+"
+>
         <option>This Week</option>
       </select>
     </div>
@@ -361,7 +393,13 @@ setWifiPlans(wifiData || []);
   </div>
 
   {/* EXPIRING SOON */}
-    <div className="bg-white rounded-2xl p-5 shadow-sm">
+    <div className="bg-white/45
+backdrop-blur-xl
+rounded-2xl
+p-5
+border
+border-white/60
+shadow-[0_12px_32px_rgba(255,255,255,0.3)]">
   <h2 className="font-semibold text-lg mb-4">
     Expiring Soon
   </h2>
@@ -419,20 +457,6 @@ setWifiPlans(wifiData || []);
 </div>
 
 {/* RECENT PLANS */}
-<div className="bg-white rounded-2xl p-4 md:p-5 shadow-sm">
-  <div className="flex justify-between items-center mb-4">
-    <h2 className="font-semibold text-lg">
-      Recent Plans
-    </h2>
-
-    <Link
-      href="/plans"
-      className="text-indigo-600 font-medium"
-    >
-      View All
-    </Link>
-  </div>
-
 <div
   className="
   flex
@@ -446,46 +470,46 @@ setWifiPlans(wifiData || []);
   scrollbar-hide
   "
 >
-    {plans.slice(0, 5).map((p) => (
-<div
-  key={p.id}
-  className="
-w-[160px]
-md:w-full
-min-h-[110px]
-flex-shrink-0
-bg-white
-rounded-xl
-border
-border-slate-100
-p-1
-shadow-sm
-"
->
-  <Image
-    src={p.image}
-    alt={p.name}
-    width={40}
-    height={32}
-    className="mb-2"
-  />
+  {plans.slice(0, 5).map((p) => (
+    <div
+      key={p.id}
+      className="
+      w-[160px]
+      md:w-full
+      min-h-[110px]
+      flex-shrink-0
+      bg-white/35
+      backdrop-blur-xl
+      border
+      border-white/60
+      rounded-xl
+      p-2
+      shadow-[0_8px_24px_rgba(31,38,135,0.08)]
+      "
+    >
+      <Image
+        src={p.image}
+        alt={p.name}
+        width={40}
+        height={32}
+        className="mb-2"
+      />
 
-  <div className="text-[13px] font-semibold truncate">
-    {p.name}
-  </div>
+      <div className="text-[13px] font-semibold truncate">
+        {p.name}
+      </div>
 
-  <div className="text-indigo-600 font-bold mt-1">
-    ₹{p.price}
-  </div>
+      <div className="text-indigo-600 font-bold mt-1">
+        ₹{p.price}
+      </div>
 
-    <div className="text-xs text-gray-400 mt-1">
-      Subscription Plan
+      <div className="text-xs text-gray-400 mt-1">
+        Subscription Plan
+      </div>
     </div>
-  </div>
-))}
-  </div>
+  ))}
 </div>
-</div>
-  );
+</div> </div>
+);
 }
       

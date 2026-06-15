@@ -200,13 +200,12 @@ const matchesSearch =
 min-h-screen
 relative
 overflow-hidden
-p-3
-md:p-6
+px-2 py-3
 bg-[#f3f1fb]
 "
 >
  
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-md mx-auto">
 
         {/* HEADER */}
         <div className="flex justify-between mb-5 items-center">
@@ -231,7 +230,7 @@ bg-[#f3f1fb]
       onChange={(e) => setSearch(e.target.value)}
       className="
       w-full
-      h-14
+      h-12
       pl-11
       pr-4
       rounded-full
@@ -251,8 +250,8 @@ shadow-[0_8px_25px_rgba(180,180,220,.12)]
   <button
     onClick={() => setShowModal(true)}
     className="
-    h-14
-    px-7
+    h-11
+    px-4
     rounded-full
     bg-gradient-to-r
     from-violet-500
@@ -280,8 +279,8 @@ relative
 overflow-hidden
 bg-white/20
 backdrop-blur-[40px]
-rounded-[28px]
-p-4
+rounded-[24px]
+p-3
 border
 border-white/60
 shadow-[0_20px_60px_rgba(31,38,135,0.15)]
@@ -348,7 +347,7 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
       justify-center
       text-violet-500
       font-semibold
-      text-lg
+      text-base
       shrink-0
       "
     >
@@ -362,7 +361,7 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
     {/* Text */}
     <div className="flex flex-col min-w-0">
 
-  <h2 className="text-lg font-semibold text-slate-900">
+  <h2 className="text-base font-semibold text-slate-900">
     {c.name}
   </h2>
 
@@ -386,7 +385,7 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
   <div className="flex flex-col items-end gap-3">
 
     <span
-      className={`px-4 py-1 rounded-full text-sm font-medium ${
+      className={`px-3 py-1 text-xs rounded-full text-sm font-medium ${
         expired
           ? "bg-red-100/60 text-red-500 backdrop-blur-xl"
           : "bg-green-100/60 text-green-500 backdrop-blur-xl"
@@ -414,13 +413,15 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
 
 </div>
   {/* BUTTONS */}
-  <div className="relative z-10 flex gap-3 mt-2">
+  <div className="relative z-10 flex gap-3 mt-1">
 
     <button
   onClick={() => editCustomer(c)}
   className="
   flex-1
-  h-12
+  h-9
+gap-1
+text-sm
   rounded-full
   bg-white/40
   backdrop-blur-xl
@@ -429,19 +430,21 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
   flex
   items-center
   justify-center
-  gap-2
+
   text-indigo-500
   font-medium
   "
 >
-  <Pencil size={16} />
+  <Pencil size={14} />
   Edit
 </button>
     <button
   onClick={() => renewCustomer(c.id)}
   className="
   flex-1
-  h-12
+  h-9
+gap-1
+text-sm
   rounded-full
   bg-white/40
   backdrop-blur-xl
@@ -450,12 +453,12 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
   flex
   items-center
   justify-center
-  gap-2
+  
   text-violet-600
   font-medium
   "
 >
-  <RefreshCcw size={16} />
+  <RefreshCcw size={14} />
   Renew
 </button>
 
@@ -463,7 +466,9 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
   onClick={() => setDeleteId(c.id)}
   className="
   flex-1
-  h-12
+  h-9
+gap-1
+text-sm
   rounded-full
   bg-white/40
   backdrop-blur-xl
@@ -472,12 +477,11 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
   flex
   items-center
   justify-center
-  gap-2
   text-red-500
   font-medium
   "
 >
-  <Trash2 size={16} />
+  <Trash2 size={14} />
   Delete
 </button>
   </div>

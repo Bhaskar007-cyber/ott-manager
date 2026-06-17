@@ -365,15 +365,15 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
     {c.name}
   </h2>
 
-  <p className="text-[9px] text-slate-500 ">
+  <p className="text-[10px] text-slate-500 ">
     {c.phone}
   </p>
 
-  <p className="text-[8px] text-violet-600 font-medium">
+  <p className="text-[9px] text-violet-600 font-medium">
     OTT: {c.ottNumber || "-"}
   </p>
 
-  <p className="text-[8px] text-slate-400">
+  <p className="text-[9px] text-slate-400">
     Exp: {new Date(c.expiryDate).toLocaleDateString()}
   </p>
 

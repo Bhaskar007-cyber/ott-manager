@@ -225,7 +225,7 @@ bg-[#f3f1fb]
     </span>
 
     <input
-      placeholder="Search customers..."
+      placeholder="🔍 Search customers..."
       value={search}
       onChange={(e) => setSearch(e.target.value)}
       className="
@@ -250,18 +250,18 @@ shadow-[0_8px_25px_rgba(180,180,220,.12)]
   <button
     onClick={() => setShowModal(true)}
     className="
-    h-11
-    px-4
+    h-10
+    w-20
+    text-[11px]
     rounded-full
     bg-gradient-to-r
     from-violet-500
     to-indigo-500
     text-white
-    font-medium
     shadow-[0_15px_40px_rgba(139,92,246,.55)]
     "
   >
-    + Add Customer
+    + Add
   </button>
 
 </div>

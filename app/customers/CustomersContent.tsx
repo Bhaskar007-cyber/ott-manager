@@ -361,19 +361,19 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
     {/* Text */}
     <div className="flex flex-col min-w-0">
 
-  <h2 className="text-sm font-semibold text-slate-900">
+  <h2 className="text-xs font-semibold text-slate-900">
     {c.name}
   </h2>
 
-  <p className="text-sm text-slate-500">
+  <p className="text-[9px] text-slate-500 ">
     {c.phone}
   </p>
 
-  <p className="text-xs text-violet-600 font-medium">
+  <p className="text-[8px] text-violet-600 font-medium">
     OTT: {c.ottNumber || "-"}
   </p>
 
-  <p className="text-xs text-slate-400">
+  <p className="text-[8px] text-slate-400">
     Exp: {new Date(c.expiryDate).toLocaleDateString()}
   </p>
 

@@ -280,7 +280,7 @@ overflow-hidden
 bg-white/20
 backdrop-blur-[40px]
 rounded-[24px]
-p-3
+p-2
 border
 border-white/60
 shadow-[0_20px_60px_rgba(31,38,135,0.15)]
@@ -361,7 +361,7 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
     {/* Text */}
     <div className="flex flex-col min-w-0">
 
-  <h2 className="text-base font-semibold text-slate-900">
+  <h2 className="text-sm font-semibold text-slate-900">
     {c.name}
   </h2>
 
@@ -369,7 +369,7 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
     {c.phone}
   </p>
 
-  <p className="text-sm text-violet-600 font-medium">
+  <p className="text-xs text-violet-600 font-medium">
     OTT: {c.ottNumber || "-"}
   </p>
 
@@ -400,8 +400,8 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
         alt="plan"
         onClick={() => setPreviewImage(c.plan?.image || null)}
         className="
-        w-14
-        h-14
+        w-10
+        h-10
         rounded-2xl
         object-cover
         cursor-pointer
@@ -421,7 +421,7 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
   flex-1
   h-9
 gap-1
-text-sm
+text-xs
   rounded-full
   bg-white/40
   backdrop-blur-xl

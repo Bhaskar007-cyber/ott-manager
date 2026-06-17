@@ -413,15 +413,15 @@ shadow-[0_20px_60px_rgba(31,38,135,0.15)]
 
 </div>
   {/* BUTTONS */}
-  <div className="relative z-10 flex gap-3 mt-1">
+  <div className="relative z-10 flex items-center justify-center gap-3 mt-2">
 
     <button
   onClick={() => editCustomer(c)}
   className="
-  flex-1
-  h-9
+  w-[80px]
+  h-8
 gap-1
-text-xs
+text-[10px]
   rounded-full
   bg-white/40
   backdrop-blur-xl
@@ -435,16 +435,16 @@ text-xs
   font-medium
   "
 >
-  <Pencil size={14} />
+  <Pencil size={9.5} />
   Edit
 </button>
     <button
   onClick={() => renewCustomer(c.id)}
   className="
-  flex-1
-  h-9
+  w-[80px]
+  h-8
 gap-1
-text-sm
+text-[10px]
   rounded-full
   bg-white/40
   backdrop-blur-xl
@@ -458,17 +458,17 @@ text-sm
   font-medium
   "
 >
-  <RefreshCcw size={14} />
+  <RefreshCcw size={9.5} />
   Renew
 </button>
 
     <button
   onClick={() => setDeleteId(c.id)}
   className="
-  flex-1
-  h-9
+   w-[80px]
+  h-8
 gap-1
-text-sm
+text-[10px]
   rounded-full
   bg-white/40
   backdrop-blur-xl
@@ -481,7 +481,7 @@ text-sm
   font-medium
   "
 >
-  <Trash2 size={14} />
+  <Trash2 size={9.5} />
   Delete
 </button>
   </div>
